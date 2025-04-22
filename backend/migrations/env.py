@@ -27,7 +27,12 @@ config.set_section_option(section, "DB_URL", database_settings.url)
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from src.clients.database.base import Base
-
+from src.clients.database.models.anime_review import *
+from src.clients.database.models.user import *
+from src.clients.database.models.anime import *
+from src.clients.database.models.genre import *
+from src.clients.database.models.user_favorite import *
+from src.clients.database.models.anime_genre import *
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
