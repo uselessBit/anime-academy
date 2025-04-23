@@ -2,6 +2,9 @@ from src.clients.database.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger, String, SmallInteger, DateTime, ForeignKey, func
 
+from src.clients.database.models.anime import Anime
+
+
 class AnimeReview(Base):
     __tablename__ = "anime_reviews"
 

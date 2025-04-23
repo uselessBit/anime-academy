@@ -2,6 +2,9 @@ from src.clients.database.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger, String
 
+from src.clients.database.models.anime_review import AnimeReview
+from src.clients.database.models.user_favorite import UserFavorite
+
 
 class User(Base):
     __tablename__ = "users"

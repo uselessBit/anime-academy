@@ -2,6 +2,9 @@ from src.clients.database.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger, String, SmallInteger
 
+from src.clients.database.models.anime_genre import AnimeGenre
+
+
 class Anime(Base):
     __tablename__ = "anime"
 
