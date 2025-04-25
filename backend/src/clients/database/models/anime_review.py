@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.clients.database.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger, String, SmallInteger, DateTime, ForeignKey, func
@@ -13,7 +15,7 @@ class AnimeReview(Base):
     anime_id: Mapped[BigInteger] = mapped_column(ForeignKey("anime.id"))
     rating: Mapped[int] = mapped_column(SmallInteger)
     review: Mapped[str] = mapped_column(String(255))
-    created_at: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
 
     user: Mapped["User"] = relationship("User", back_populates="reviews")
     anime: Mapped["Anime"] = relationship("Anime", back_populates="reviews")
