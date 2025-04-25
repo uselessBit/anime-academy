@@ -7,7 +7,7 @@ class CreateAnimeReviewSchema(BaseModel):
     anime_id: int | None = None
     rating: int | None = None
     review: str | None = None
-    created_at: datetime | None = None
+    created_at: datetime
 
 
 class UpdateAnimeReviewSchema(BaseModel):
@@ -15,4 +15,4 @@ class UpdateAnimeReviewSchema(BaseModel):
     anime_id: int | None = None
     rating: int | None = None
     review: str | None = None
-    created_at: datetime
+    created_at: datetime | None = None
