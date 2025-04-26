@@ -1,18 +1,19 @@
 """init
 
-Revision ID: ca3e0392edf4
+Revision ID: d49995fae930
 Revises: 
-Create Date: 2025-04-22 18:35:16.434482
+Create Date: 2025-04-26 16:06:40.635486
 
 """
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+import fastapi_users_db_sqlalchemy
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'ca3e0392edf4'
+revision: str = 'd49995fae930'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -36,12 +37,15 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('first_name', sa.String(length=255), nullable=False),
-    sa.Column('last_name', sa.String(length=255), nullable=False),
-    sa.Column('username', sa.String(length=255), nullable=False),
+    sa.Column('id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
+    sa.Column('email', sa.String(length=320), nullable=False),
+    sa.Column('hashed_password', sa.String(length=1024), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_superuser', sa.Boolean(), nullable=False),
+    sa.Column('is_verified', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     op.create_table('anime_genres',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('anime_id', sa.Integer(), nullable=False),
@@ -52,19 +56,20 @@ def upgrade() -> None:
     )
     op.create_table('anime_reviews',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.Column('anime_id', sa.Integer(), nullable=False),
     sa.Column('rating', sa.SmallInteger(), nullable=False),
     sa.Column('review', sa.String(length=255), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['anime_id'], ['anime.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_favorites',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('status', sa.String(length=255), nullable=True),
     sa.Column('anime_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.ForeignKeyConstraint(['anime_id'], ['anime.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -78,6 +83,7 @@ def downgrade() -> None:
     op.drop_table('user_favorites')
     op.drop_table('anime_reviews')
     op.drop_table('anime_genres')
+    op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
     op.drop_table('genres')
     op.drop_table('anime')

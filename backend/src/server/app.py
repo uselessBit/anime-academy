@@ -1,11 +1,12 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from src.clients.database.base import Base
-from src.container import DependencyContainer, container
+from src.clients.database.utils import create_db_and_tables
+from src.container import DependencyContainer
 from src.server.handle_erros import patch_exception_handlers
 from src.server.routers.v1.routers import api_v1_router
-from sqlalchemy.ext.asyncio import AsyncEngine
 
 class CustomFastAPI(FastAPI):
     container: DependencyContainer
@@ -14,17 +15,15 @@ class CustomFastAPI(FastAPI):
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://0.0.0.0:8000"
 ]
 
+
+@asynccontextmanager
 async def lifespan(app: FastAPI):
-    engine: AsyncEngine = container.async_engine()
-
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
+    await create_db_and_tables()
     yield
 
-    await engine.dispose()
 
 
 def create_application() -> CustomFastAPI:

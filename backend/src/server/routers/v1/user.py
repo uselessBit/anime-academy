@@ -1,18 +1,36 @@
 from src.clients.database.models.user import User
-from fastcrud import FastCRUD, crud_router
+from fastapi import APIRouter, Depends
 
-from src.clients.database.utils import get_session
-from src.services.user.schemas import CreateUserSchema, UpdateUserSchema
+from src.services.user.schemas import UserRead, UserUpdate, UserCreate
+from src.services.user.service import fastapi_users, auth_backend, current_active_user
 
-user_crud = FastCRUD(User)
+user_router = APIRouter(prefix="")
 
-
-user_router = crud_router(
-    session=get_session,
-    model=User,
-    create_schema=CreateUserSchema,
-    update_schema=UpdateUserSchema,
-    crud=user_crud,
-    path="/users",
-    tags=["Users"],
+user_router.include_router(
+    fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
 )
+user_router.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
+user_router.include_router(
+    fastapi_users.get_reset_password_router(),
+    prefix="/auth",
+    tags=["auth"],
+)
+user_router.include_router(
+    fastapi_users.get_verify_router(UserRead),
+    prefix="/auth",
+    tags=["auth"],
+)
+user_router.include_router(
+    fastapi_users.get_users_router(UserRead, UserUpdate),
+    prefix="/users",
+    tags=["users"],
+)
+
+
+@user_router.get("/authenticated-route")
+async def authenticated_route(user: User = Depends(current_active_user)):
+    return {"message": f"Hello {user.email}!"}
