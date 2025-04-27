@@ -4,14 +4,18 @@ from dependency_injector import containers
 from dependency_injector.providers import Factory, Resource, Singleton
 
 from src.clients.database.engine import Database, async_engine
+from src.clients.database.models.anime import Anime
+from src.services.anime.service import AnimeService
 from src.services.anime_review.service import AnimeReviewService
 from src.settings.database import DatabaseSettings
+from fastcrud import FastCRUD
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
     from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
     from src.services.anime_review.interface import AnimeReviewServiceI
+    from src.services.anime.interface import AnimeServiceI
 
 
 class DependencyContainer(containers.DeclarativeContainer):
@@ -23,7 +27,10 @@ class DependencyContainer(containers.DeclarativeContainer):
     database: Factory["Database"] = Factory(Database, engine=async_engine.provided)
     database_session: Resource["AsyncGenerator[AsyncSession, None]"] = Resource(database.provided.get_session)
 
+    anime_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=Anime)
+
     anime_review_service: Factory["AnimeReviewServiceI"] = Factory(AnimeReviewService, session=database_session)
+    anime_service: Factory["AnimeServiceI"] = Factory(AnimeService, session=database_session, anime_crud=anime_crud)
 
 
 

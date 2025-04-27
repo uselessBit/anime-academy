@@ -38,7 +38,7 @@ async def create_anime_review(
         payload: CreateAnimeReviewSchema,
         anime_review_service: AnimeReviewServiceI = Depends(get_anime_review_service),
         session = Depends(get_session)
-):
+) -> JSONResponse:
 
     review = await anime_review_crud.create(session, payload)
     await anime_review_service.update_anime_rating(review.anime_id)
@@ -51,7 +51,7 @@ async def update_anime_review(
         payload: UpdateAnimeReviewSchema,
         anime_review_service: AnimeReviewServiceI = Depends(get_anime_review_service),
         session: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     await anime_review_crud.update(session, payload, id=review_id, allow_multiple=True)
     await anime_review_service.update_anime_rating(payload.anime_id)
     return JSONResponse(content={"message": "Anime review updated successfully"}, status_code=HTTPStatus.OK)
@@ -62,7 +62,7 @@ async def delete_anime_review(
         review_id: int,
         session: AsyncSession = Depends(get_session),
         anime_review_service: AnimeReviewServiceI = Depends(get_anime_review_service),
-):
+) -> JSONResponse:
     review = await anime_review_crud.get(session, id=review_id)
     if review is None:
         raise AnimeReviewNotFoundError
