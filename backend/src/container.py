@@ -8,7 +8,7 @@ from src.clients.database.models.anime import Anime
 from src.clients.database.models.anime_genre import AnimeGenre
 from src.clients.database.models.anime_review import AnimeReview
 from src.clients.database.models.genre import Genre
-from src.clients.database.models.user_favorite import UserFavorite
+from src.clients.database.models.user_anime_status import UserAnimeStatus
 from src.services.anime.service import AnimeService
 from src.services.anime_review.service import AnimeReviewService
 from src.settings.database import DatabaseSettings
@@ -35,7 +35,7 @@ class DependencyContainer(containers.DeclarativeContainer):
     anime_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=Anime)
     anime_genre_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=AnimeGenre)
     genre_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=Genre)
-    user_favorite_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=UserFavorite)
+    user_anime_status_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=UserAnimeStatus)
     anime_review_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=AnimeReview)
 
     anime_review_service: Factory["AnimeReviewServiceI"] = Factory(AnimeReviewService, session=database_session, anime_review_crud=anime_review_crud)

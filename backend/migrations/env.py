@@ -31,7 +31,7 @@ from src.clients.database.models.anime_review import *
 from src.clients.database.models.user import *
 from src.clients.database.models.anime import *
 from src.clients.database.models.genre import *
-from src.clients.database.models.user_favorite import *
+from src.clients.database.models.user_anime_status import *
 from src.clients.database.models.anime_genre import *
 target_metadata = Base.metadata
 

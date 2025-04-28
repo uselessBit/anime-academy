@@ -1,4 +1,5 @@
 from enum import StrEnum
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -12,13 +13,13 @@ class AnimeStatus(StrEnum):
     REWATCHING = "rewatching"
 
 
-class CreateUserFavoriteSchema(BaseModel):
+class CreateUserAnimeStatusSchema(BaseModel):
     anime_id: int
-    user_id: int
+    user_id: UUID
     status: AnimeStatus | None = None
 
 
-class UpdateUserFavoriteSchema(BaseModel):
+class UpdateUserAnimeStatusSchema(BaseModel):
     anime_id: int | None = None
-    user_id: int | None = None
+    user_id: UUID | None = None
     status: AnimeStatus | None
