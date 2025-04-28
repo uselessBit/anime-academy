@@ -8,11 +8,11 @@ from fastapi_users.authentication import (
     CookieTransport,
     JWTStrategy,
 )
-
+from sqlalchemy.ext.asyncio import AsyncSession
 from src.clients.database.models.user import User
 from fastapi_users.db import SQLAlchemyUserDatabase
 
-from src.clients.database.utils import get_user_db
+from src.container import container
 from src.settings.user_settins import UserSettings
 
 user_settings = UserSettings()
@@ -37,6 +37,9 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         logger.info("Verification requested for user %s. Verification token: %s", user.id, token)
 
 
+async def get_user_db(session: AsyncSession = Depends(container.database_session_no_context())):
+    yield SQLAlchemyUserDatabase(session, User)
+
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
     yield UserManager(user_db)
 
@@ -56,5 +59,3 @@ auth_backend = AuthenticationBackend(
 )
 
 fastapi_users = FastAPIUsers[User, uuid.UUID](get_user_manager, [auth_backend])
-
-current_active_user = fastapi_users.current_user(active=True)

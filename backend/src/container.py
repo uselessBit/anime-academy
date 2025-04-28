@@ -30,6 +30,7 @@ class DependencyContainer(containers.DeclarativeContainer):
     )
     database: Factory["Database"] = Factory(Database, engine=async_engine.provided)
     database_session: Resource["AsyncGenerator[AsyncSession, None]"] = Resource(database.provided.get_session)
+    database_session_no_context: Resource["AsyncGenerator[AsyncSession, None]"] = Resource(database.provided.get_db_session)
 
     anime_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=Anime)
     anime_genre_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=AnimeGenre)

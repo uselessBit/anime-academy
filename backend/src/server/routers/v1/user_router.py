@@ -2,7 +2,7 @@ from src.clients.database.models.user import User
 from fastapi import APIRouter, Depends
 
 from src.services.user.schemas import UserRead, UserUpdate, UserCreate
-from src.services.user.service import fastapi_users, auth_backend, current_active_user
+from src.services.user.service import fastapi_users, auth_backend
 
 user_router = APIRouter(prefix="")
 
@@ -29,8 +29,3 @@ user_router.include_router(
     prefix="/users",
     tags=["users"],
 )
-
-
-@user_router.get("/authenticated-route")
-async def authenticated_route(user: User = Depends(current_active_user)):
-    return {"message": f"Hello {user.email}!"}

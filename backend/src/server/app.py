@@ -3,8 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from src.clients.database.utils import create_db_and_tables
-from src.container import DependencyContainer
+from src.container import DependencyContainer, container
 from src.server.handle_erros import patch_exception_handlers
 from src.server.routers.v1.routers import api_v1_router
 
@@ -21,7 +20,7 @@ origins = [
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await create_db_and_tables()
+    await container.database().create_db_and_tables()
     yield
 
 
