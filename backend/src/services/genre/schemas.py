@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class CreateGenreSchema(BaseModel):
-    name: str | None = None
+    name: str
 
 
 class UpdateGenreSchema(BaseModel):

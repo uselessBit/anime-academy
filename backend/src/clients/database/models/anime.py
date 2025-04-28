@@ -9,11 +9,11 @@ class Anime(Base):
     __tablename__ = "anime"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(255))
-    description: Mapped[str] = mapped_column(String(255))
-    release_year: Mapped[int] = mapped_column(SmallInteger)
-    image_url: Mapped[str] = mapped_column(String(255))
-    rating: Mapped[float] = mapped_column()
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(nullable=True)
+    release_year: Mapped[int] = mapped_column(SmallInteger, nullable=True)
+    image_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    rating: Mapped[float] = mapped_column(nullable=True)
 
     reviews: Mapped[list["AnimeReview"]] = relationship(
         back_populates="anime", cascade="all, delete-orphan"
