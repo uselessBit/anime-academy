@@ -3,7 +3,6 @@ from http import HTTPStatus
 from src.clients.database.models.anime import Anime
 from fastcrud import crud_router
 
-from src.clients.database.utils import get_session
 from src.container import container
 from src.services.anime.interface import AnimeServiceI
 from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema
@@ -19,11 +18,11 @@ async def get_anime_service() -> AnimeServiceI:
 
 anime_tag = "Anime"
 anime_auto_router = crud_router(
-    session=get_session,
+    session=container.database().get_db_session,
     model=Anime,
     create_schema=CreateAnimeSchema,
     update_schema=UpdateAnimeSchema,
-    crud=container.anime_service().anime_crud,
+    crud=container.anime_crud(),
     included_methods=["read_multi", "read",],
     path="/anime",
 )

@@ -29,6 +29,10 @@ class Database:
         async with self.session() as session:
             yield session
 
+    async def get_db_session(self) -> AsyncGenerator[AsyncSession, None]:
+        async with self.session() as session:
+            yield session
+
 
 # alembic revision --autogenerate -m 'initial'
 # alembic upgrade head
