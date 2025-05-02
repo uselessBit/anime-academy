@@ -5,6 +5,7 @@
 - Postgres
 - Redis
 - ReactJS
+- ViteJS
 - SCSS
 
 #### Backend architecture
