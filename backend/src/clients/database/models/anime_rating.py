@@ -7,15 +7,14 @@ from sqlalchemy import BigInteger, String, SmallInteger, DateTime, ForeignKey, f
 from src.clients.database.models.anime import Anime
 
 
-class AnimeReview(Base):
-    __tablename__ = "anime_reviews"
+class AnimeRating(Base):
+    __tablename__ = "anime_rating"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[BigInteger] = mapped_column(ForeignKey("users.id"))
     anime_id: Mapped[BigInteger] = mapped_column(ForeignKey("anime.id"))
     rating: Mapped[int] = mapped_column(SmallInteger)
-    review: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
 
-    user: Mapped["User"] = relationship("User", back_populates="reviews")
-    anime: Mapped["Anime"] = relationship("Anime", back_populates="reviews")
+    user: Mapped["User"] = relationship("User", back_populates="ratings")
+    anime: Mapped["Anime"] = relationship("Anime", back_populates="ratings")

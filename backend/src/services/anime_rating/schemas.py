@@ -3,17 +3,15 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-class CreateAnimeReviewSchema(BaseModel):
+class CreateAnimeRatingSchema(BaseModel):
     user_id: UUID | None = None
     anime_id: int | None = None
     rating: int | None = Field(..., ge=1, le=10)
-    review: str | None = None
     created_at: datetime
 
 
-class UpdateAnimeReviewSchema(BaseModel):
+class UpdateAnimeRatingSchema(BaseModel):
     user_id: UUID | None = None
     anime_id: int | None = None
     rating: int | None = Field(..., ge=1, le=10)
-    review: str | None = None
     created_at: datetime | None = None

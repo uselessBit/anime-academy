@@ -15,7 +15,7 @@ class Anime(Base):
     image_url: Mapped[str] = mapped_column(String(255), nullable=True)
     rating: Mapped[float] = mapped_column(nullable=True)
 
-    reviews: Mapped[list["AnimeReview"]] = relationship(
+    ratings: Mapped[list["AnimeRating"]] = relationship(
         back_populates="anime", cascade="all, delete-orphan"
     )
     genres: Mapped[list["AnimeGenre"]] = relationship(

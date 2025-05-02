@@ -4,7 +4,7 @@ class BaseError(Exception):
         super().__init__(message)
 
 class AnimeReviewNotFoundError(BaseError):
-    def __init__(self, message: str = "Anime review not found error"):
+    def __init__(self, message: str = "Anime rating not found error"):
         super().__init__(message)
 
 class AnimeNotFoundError(BaseError):
