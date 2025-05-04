@@ -16,7 +16,7 @@ class AnimeComment(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[UUID] = mapped_column(SQLAlchemyUUID(as_uuid=True), ForeignKey("users.id"))
-    anime_id: Mapped[BigInteger] = mapped_column(ForeignKey("anime.id"))
+    anime_id: Mapped[int] = mapped_column(ForeignKey("anime.id"))
     parent_id: Mapped[int | None] = mapped_column(
         ForeignKey("anime_comments.id"), nullable=True
     )
@@ -33,7 +33,7 @@ class AnimeComment(Base):
         back_populates="parent",
         cascade="all, delete-orphan",
         remote_side=[id],
-        single_parent=True
+        single_parent=True,
     )
     parent: Mapped["AnimeComment | None"] = relationship(
         "AnimeComment", back_populates="replies", remote_side=[parent_id]

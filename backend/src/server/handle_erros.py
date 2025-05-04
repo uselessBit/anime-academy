@@ -11,15 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 ERROR_STATUS_MAP = {
-    # errors.UserNotFoundError: HTTPStatus.BAD_REQUEST,
-    # errors.SizeNotFoundError: HTTPStatus.BAD_REQUEST,
-    # errors.ProductNotFoundError: HTTPStatus.BAD_REQUEST,
-    # errors.PriceNotFoundError: HTTPStatus.BAD_REQUEST,
-    # errors.OrderNotFoundError: HTTPStatus.BAD_REQUEST,
-    # errors.IngredientNotFoundError: HTTPStatus.BAD_REQUEST,
-    # errors.BasketNotFoundError: HTTPStatus.BAD_REQUEST,
-    # errors.BasketItemNotFoundError: HTTPStatus.BAD_REQUEST,
-    # errors.KeyAlreadyExists: HTTPStatus.BAD_REQUEST,
+    errors.AnimeReviewNotFoundError: HTTPStatus.BAD_REQUEST,
+    errors.AnimeNotFoundError: HTTPStatus.BAD_REQUEST,
+    errors.CommentNotFoundError: HTTPStatus.BAD_REQUEST,
+    errors.KeyAlreadyExistsError: HTTPStatus.BAD_REQUEST,
 }
 
 

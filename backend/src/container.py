@@ -11,6 +11,7 @@ from src.clients.database.models.anime_rating import AnimeRating
 from src.clients.database.models.genre import Genre
 from src.clients.database.models.user_anime_status import UserAnimeStatus
 from src.services.anime.service import AnimeService
+from src.services.anime_comment.service import AnimeCommentService
 from src.services.anime_rating.service import AnimeRatingService
 from src.settings.database import DatabaseSettings
 from fastcrud import FastCRUD
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
     from src.services.anime_rating.interface import AnimeRatingServiceI
     from src.services.anime.interface import AnimeServiceI
+    from src.services.anime_comment.interface import AnimeCommentServiceI
 
 
 class DependencyContainer(containers.DeclarativeContainer):
@@ -42,6 +44,7 @@ class DependencyContainer(containers.DeclarativeContainer):
 
     anime_rating_service: Factory["AnimeRatingServiceI"] = Factory(AnimeRatingService, session=database_session, anime_rating_crud=anime_rating_crud)
     anime_service: Factory["AnimeServiceI"] = Factory(AnimeService, session=database_session, anime_crud=anime_crud)
+    anime_comment_service: Factory["AnimeCommentServiceI"] = Factory(AnimeCommentService, session=database_session)
 
 
 
