@@ -28,6 +28,7 @@ config.set_section_option(section, "DB_URL", database_settings.url)
 # target_metadata = mymodel.Base.metadata
 from src.clients.database.base import Base
 from src.clients.database.models.anime_rating import *
+from src.clients.database.models.anime_comment import *
 from src.clients.database.models.user import *
 from src.clients.database.models.anime import *
 from src.clients.database.models.genre import *

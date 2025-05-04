@@ -5,6 +5,7 @@ from dependency_injector.providers import Factory, Resource, Singleton
 
 from src.clients.database.engine import Database, async_engine
 from src.clients.database.models.anime import Anime
+from src.clients.database.models.anime_comment import AnimeComment
 from src.clients.database.models.anime_genre import AnimeGenre
 from src.clients.database.models.anime_rating import AnimeRating
 from src.clients.database.models.genre import Genre
@@ -37,6 +38,7 @@ class DependencyContainer(containers.DeclarativeContainer):
     genre_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=Genre)
     user_anime_status_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=UserAnimeStatus)
     anime_rating_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=AnimeRating)
+    anime_comment_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=AnimeComment)
 
     anime_rating_service: Factory["AnimeRatingServiceI"] = Factory(AnimeRatingService, session=database_session, anime_rating_crud=anime_rating_crud)
     anime_service: Factory["AnimeServiceI"] = Factory(AnimeService, session=database_session, anime_crud=anime_crud)

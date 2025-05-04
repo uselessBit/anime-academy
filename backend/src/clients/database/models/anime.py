@@ -18,6 +18,9 @@ class Anime(Base):
     ratings: Mapped[list["AnimeRating"]] = relationship(
         back_populates="anime", cascade="all, delete-orphan"
     )
+    comments: Mapped[list["AnimeComment"]] = relationship(
+        back_populates="anime", cascade="all, delete-orphan"
+    )
     genres: Mapped[list["AnimeGenre"]] = relationship(
         back_populates="anime", cascade="all, delete-orphan"
     )

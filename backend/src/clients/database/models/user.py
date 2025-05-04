@@ -12,6 +12,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     ratings: Mapped[list["AnimeRating"]] = relationship(
         "AnimeRating", back_populates="user", cascade="all, delete-orphan"
     )
+    comments: Mapped[list["AnimeComment"]] = relationship(
+        "AnimeComment", back_populates="user", cascade="all, delete-orphan"
+    )
     user_anime_statuses: Mapped[list["UserAnimeStatus"]] = relationship(
         "UserAnimeStatus", back_populates="user", cascade="all, delete-orphan"
     )
