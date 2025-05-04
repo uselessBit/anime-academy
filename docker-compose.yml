@@ -13,6 +13,15 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis:7
+    restart: always
+    container_name: anime-academy-redis
+    networks:
+      - my_network
+    ports:
+      - "6379:6379"
+
 
   backend:
     build:
@@ -27,6 +36,7 @@ services:
       - my_network
     depends_on:
       - db
+      - redis
 
 
   adminer:

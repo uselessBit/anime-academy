@@ -7,6 +7,7 @@ from src.container import DependencyContainer, container
 from src.server.handle_erros import patch_exception_handlers
 from src.server.middlewares.cache import CacheMiddleware
 from src.server.routers.v1.routers import api_v1_router
+from fastapi.staticfiles import StaticFiles
 
 class CustomFastAPI(FastAPI):
     container: DependencyContainer
@@ -40,6 +41,6 @@ def create_application() -> CustomFastAPI:
                           redis_client=container.redis_client(),
                           expiration=container.redis_settings().expiration)
     patch_exception_handlers(app=server)
-    # server.mount("/media", StaticFiles(directory="/media"), name="media")
+    server.mount("/media", StaticFiles(directory="/media"), name="media")
     server.include_router(api_v1_router)
     return server
