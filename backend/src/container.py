@@ -15,6 +15,8 @@ from src.services.anime_comment.service import AnimeCommentService
 from src.services.anime_rating.service import AnimeRatingService
 from src.settings.database import DatabaseSettings
 from fastcrud import FastCRUD
+from redis.asyncio import Redis
+from src.settings.redis import RedisSettings
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
@@ -27,6 +29,8 @@ if TYPE_CHECKING:
 
 class DependencyContainer(containers.DeclarativeContainer):
     database_settings: Singleton["DatabaseSettings"] = Singleton(DatabaseSettings)
+    redis_settings: Singleton["RedisSettings"] = Singleton(RedisSettings)
+
     async_engine: Singleton["AsyncEngine"] = Singleton(
         async_engine,
         database_settings=database_settings.provided,
@@ -34,6 +38,13 @@ class DependencyContainer(containers.DeclarativeContainer):
     database: Factory["Database"] = Factory(Database, engine=async_engine.provided)
     database_session: Resource["AsyncGenerator[AsyncSession, None]"] = Resource(database.provided.get_session)
     database_session_no_context: Resource["AsyncGenerator[AsyncSession, None]"] = Resource(database.provided.get_db_session)
+
+    redis_client: Singleton["Redis"] = Singleton(
+        Redis,
+        host=redis_settings.provided.host,
+        port=redis_settings.provided.port,
+        decode_responses=redis_settings.provided.decode_responses,
+    )
 
     anime_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=Anime)
     anime_genre_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=AnimeGenre)
