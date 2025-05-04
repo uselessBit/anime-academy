@@ -37,9 +37,7 @@ def create_application() -> CustomFastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    server.add_middleware(CacheMiddleware, 
-                          redis_client=container.redis_client(),
-                          expiration=container.redis_settings().expiration)
+    server.add_middleware(CacheMiddleware, redis_cache=container.redis_cache())
     patch_exception_handlers(app=server)
     server.mount("/media", StaticFiles(directory="/media"), name="media")
     server.include_router(api_v1_router)

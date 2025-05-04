@@ -10,6 +10,7 @@ from src.clients.database.models.anime_genre import AnimeGenre
 from src.clients.database.models.anime_rating import AnimeRating
 from src.clients.database.models.genre import Genre
 from src.clients.database.models.user_anime_status import UserAnimeStatus
+from src.clients.redis_cache import RedisCache
 from src.services.anime.service import AnimeService
 from src.services.anime_comment.service import AnimeCommentService
 from src.services.anime_rating.service import AnimeRatingService
@@ -45,6 +46,7 @@ class DependencyContainer(containers.DeclarativeContainer):
         port=redis_settings.provided.port,
         decode_responses=redis_settings.provided.decode_responses,
     )
+    redis_cache: Factory["RedisCache"] = Factory(RedisCache, client=redis_client, settings=redis_settings)
 
     anime_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=Anime)
     anime_genre_crud: Factory["FastCRUD"] = Factory(FastCRUD, model=AnimeGenre)
