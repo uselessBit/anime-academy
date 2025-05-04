@@ -20,31 +20,31 @@ class AnimeCommentService(BaseService, AnimeCommentServiceI):
     async def _load_replies(
             self, root_comment: AnimeComment, session
     ) -> CommentTreeResponse:
-        all_comments_query = select(AnimeComment).where(
+        query = select(AnimeComment).where(
             AnimeComment.anime_id == root_comment.anime_id
         )
-        result = await session.execute(all_comments_query)
-        all_comments = result.scalars().all()
+        result = await session.execute(query)
+        comments = result.scalars().all()
 
-        return self._build_comment_tree(all_comments, root_comment.id)
+        return self._build_comment_tree(comments, root_comment.id)
 
     @staticmethod
-    def _build_comment_tree(all_comments: list[AnimeComment], root_id: int) -> CommentTreeResponse:
+    def _build_comment_tree(comments: list[AnimeComment], root_id: int) -> CommentTreeResponse:
         tree_map: dict[int, CommentTreeResponse] = {}
         children_map: dict[int, list[CommentTreeResponse]] = {}
 
-        for c in all_comments:
-            tree_map[c.id] = CommentTreeResponse(
-                user_id=c.user_id,
-                anime_id=c.anime_id,
-                parent_id=c.parent_id,
-                comment=c.comment,
-                created_at=c.created_at,
-                level=c.level,
+        for comment in comments:
+            tree_map[comment.id] = CommentTreeResponse(
+                user_id=comment.user_id,
+                anime_id=comment.anime_id,
+                parent_id=comment.parent_id,
+                comment=comment.comment,
+                created_at=comment.created_at,
+                level=comment.level,
                 replies=[]
             )
-            if c.parent_id is not None:
-                children_map.setdefault(c.parent_id, []).append(tree_map[c.id])
+            if comment.parent_id is not None:
+                children_map.setdefault(comment.parent_id, []).append(tree_map[comment.id])
 
         for comment_id, comment_response in tree_map.items():
             comment_response.replies = children_map.get(comment_id, [])
