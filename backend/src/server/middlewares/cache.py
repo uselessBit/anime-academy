@@ -6,9 +6,9 @@ from src.clients.redis_cache import RedisCache
 
 class CacheMiddleware(BaseHTTPMiddleware):
     def __init__(
-            self,
-            app,
-            redis_cache: RedisCache,
+        self,
+        app,
+        redis_cache: RedisCache,
     ):
         super().__init__(app)
         self.redis_cache = redis_cache

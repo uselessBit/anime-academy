@@ -4,7 +4,6 @@ from src.clients.database.models.anime_genre import AnimeGenre
 from src.container import container
 from src.services.anime_genre.schemas import CreateAnimeGenreSchema, UpdateAnimeGenreSchema
 
-
 anime_genre_router = crud_router(
     session=container.database().get_db_session,
     model=AnimeGenre,

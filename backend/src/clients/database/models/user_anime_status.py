@@ -1,6 +1,8 @@
-from src.clients.database.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.clients.database.base import Base
+
 
 class UserAnimeStatus(Base):
     __tablename__ = "user_anime_statuses"

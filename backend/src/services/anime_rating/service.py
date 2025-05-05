@@ -1,6 +1,7 @@
-from typing import Callable
+from collections.abc import Callable
 
-from sqlalchemy import select, func, update
+from fastcrud import FastCRUD
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.clients.database.models.anime import Anime
@@ -8,8 +9,6 @@ from src.clients.database.models.anime_rating import AnimeRating
 from src.services.anime_rating.interface import AnimeRatingServiceI
 from src.services.anime_rating.schemas import CreateAnimeRatingSchema, UpdateAnimeRatingSchema
 from src.services.base import BaseService
-from fastcrud import FastCRUD
-
 from src.services.errors import AnimeReviewNotFoundError
 
 
@@ -42,9 +41,5 @@ class AnimeRatingService(BaseService, AnimeRatingServiceI):
             avg_rating = await session.scalar(
                 select(func.avg(AnimeRating.rating)).where(AnimeRating.anime_id == anime_id)
             )
-            await session.execute(
-                update(Anime)
-                .where(Anime.id == anime_id)
-                .values(rating=avg_rating or 0.0)
-            )
+            await session.execute(update(Anime).where(Anime.id == anime_id).values(rating=avg_rating or 0.0))
             await session.commit()

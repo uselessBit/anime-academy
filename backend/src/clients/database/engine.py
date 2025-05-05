@@ -1,7 +1,7 @@
 from asyncio import current_task
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from fastapi import Depends
+
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,

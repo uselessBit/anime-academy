@@ -15,6 +15,3 @@ class AnimeCommentServiceI(Protocol):
     @staticmethod
     @abstractmethod
     def _build_comment_tree(all_comments: list[AnimeComment], root_id: int) -> CommentTreeResponse: ...
-
-
-

@@ -1,7 +1,7 @@
-from src.clients.database.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from src.clients.database.base import Base
 from src.clients.database.models.genre import Genre
 
 

@@ -1,9 +1,9 @@
+from sqlalchemy import select
+
 from src.clients.database.models.anime_comment import AnimeComment
 from src.services.anime_comment.interface import AnimeCommentServiceI
 from src.services.anime_comment.schemas import CommentTreeResponse
 from src.services.base import BaseService
-from sqlalchemy import select
-
 from src.services.errors import CommentNotFoundError
 
 
@@ -17,12 +17,8 @@ class AnimeCommentService(BaseService, AnimeCommentServiceI):
                 raise CommentNotFoundError
             return await self._load_replies(root_comment, session)
 
-    async def _load_replies(
-            self, root_comment: AnimeComment, session
-    ) -> CommentTreeResponse:
-        query = select(AnimeComment).where(
-            AnimeComment.anime_id == root_comment.anime_id
-        )
+    async def _load_replies(self, root_comment: AnimeComment, session) -> CommentTreeResponse:
+        query = select(AnimeComment).where(AnimeComment.anime_id == root_comment.anime_id)
         result = await session.execute(query)
         comments = result.scalars().all()
 
@@ -41,7 +37,7 @@ class AnimeCommentService(BaseService, AnimeCommentServiceI):
                 comment=comment.comment,
                 created_at=comment.created_at,
                 level=comment.level,
-                replies=[]
+                replies=[],
             )
             if comment.parent_id is not None:
                 children_map.setdefault(comment.parent_id, []).append(tree_map[comment.id])
@@ -50,7 +46,3 @@ class AnimeCommentService(BaseService, AnimeCommentServiceI):
             comment_response.replies = children_map.get(comment_id, [])
 
         return tree_map[root_id]
-
-
-
-

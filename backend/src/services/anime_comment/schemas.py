@@ -4,7 +4,6 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-
 class CreateAnimeCommentSchema(BaseModel):
     user_id: UUID
     anime_id: int

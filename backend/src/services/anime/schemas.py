@@ -1,5 +1,7 @@
-from pydantic import BaseModel, model_validator
 import json
+
+from pydantic import BaseModel, model_validator
+
 
 class CreateAnimeSchema(BaseModel):
     title: str

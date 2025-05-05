@@ -1,7 +1,7 @@
-from src.clients.database.base import Base
+from sqlalchemy import SmallInteger, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, SmallInteger
 
+from src.clients.database.base import Base
 from src.clients.database.models.anime_genre import AnimeGenre
 
 
@@ -15,12 +15,6 @@ class Anime(Base):
     image_url: Mapped[str] = mapped_column(String(255), nullable=True)
     rating: Mapped[float] = mapped_column(nullable=True)
 
-    ratings: Mapped[list["AnimeRating"]] = relationship(
-        back_populates="anime", cascade="all, delete-orphan"
-    )
-    comments: Mapped[list["AnimeComment"]] = relationship(
-        back_populates="anime", cascade="all, delete-orphan"
-    )
-    genres: Mapped[list["AnimeGenre"]] = relationship(
-        back_populates="anime", cascade="all, delete-orphan"
-    )
+    ratings: Mapped[list["AnimeRating"]] = relationship(back_populates="anime", cascade="all, delete-orphan")
+    comments: Mapped[list["AnimeComment"]] = relationship(back_populates="anime", cascade="all, delete-orphan")
+    genres: Mapped[list["AnimeGenre"]] = relationship(back_populates="anime", cascade="all, delete-orphan")

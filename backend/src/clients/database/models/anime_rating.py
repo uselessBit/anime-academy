@@ -1,10 +1,10 @@
 from datetime import datetime
 from uuid import UUID
 
-from src.clients.database.base import Base
+from sqlalchemy import BigInteger, DateTime, ForeignKey, SmallInteger
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import BigInteger, String, SmallInteger, DateTime, ForeignKey, func
 
+from src.clients.database.base import Base
 from src.clients.database.models.anime import Anime
 
 

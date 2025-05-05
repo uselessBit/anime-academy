@@ -1,14 +1,11 @@
-from src.clients.database.models.user import User
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from src.services.user.schemas import UserRead, UserUpdate, UserCreate
-from src.services.user.service import fastapi_users, auth_backend
+from src.services.user.schemas import UserCreate, UserRead, UserUpdate
+from src.services.user.service import auth_backend, fastapi_users
 
 user_router = APIRouter(prefix="")
 
-user_router.include_router(
-    fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
-)
+user_router.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"])
 user_router.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
     prefix="/auth",

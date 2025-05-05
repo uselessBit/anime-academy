@@ -7,24 +7,19 @@ from src.container import DependencyContainer, container
 from src.server.handle_erros import patch_exception_handlers
 from src.server.middlewares.cache import CacheMiddleware
 from src.server.routers.v1.routers import api_v1_router
-from fastapi.staticfiles import StaticFiles
+
 
 class CustomFastAPI(FastAPI):
     container: DependencyContainer
 
 
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://0.0.0.0:8000"
-]
+origins = ["http://localhost:5173", "http://127.0.0.1:5173", "http://0.0.0.0:8000"]
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await container.database().create_db_and_tables()
     yield
-
 
 
 def create_application() -> CustomFastAPI:
@@ -39,6 +34,6 @@ def create_application() -> CustomFastAPI:
     )
     server.add_middleware(CacheMiddleware, redis_cache=container.redis_cache())
     patch_exception_handlers(app=server)
-    server.mount("/media", StaticFiles(directory="/media"), name="media")
+    # server.mount("/media", StaticFiles(directory="/media"), name="media")
     server.include_router(api_v1_router)
     return server

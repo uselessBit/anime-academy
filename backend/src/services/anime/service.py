@@ -1,15 +1,15 @@
-from typing import Callable
+from collections.abc import Callable
+
+from fastcrud import FastCRUD
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.services.anime.interface import AnimeServiceI
 from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema
 from src.services.base import BaseService
 from src.services.errors import AnimeNotFoundError
 from src.services.schemas import Image
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastcrud import FastCRUD
-
 from src.services.static import anime_path
-from src.services.utils import save_image, delete_image
+from src.services.utils import delete_image, save_image
 
 
 class AnimeService(BaseService, AnimeServiceI):

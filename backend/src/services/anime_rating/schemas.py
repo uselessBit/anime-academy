@@ -3,6 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+
 class CreateAnimeRatingSchema(BaseModel):
     user_id: UUID | None = None
     anime_id: int | None = None

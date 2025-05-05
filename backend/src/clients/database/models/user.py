@@ -1,9 +1,9 @@
-from src.clients.database.base import Base
+from fastapi_users.db import SQLAlchemyBaseUserTableUUID
 from sqlalchemy.orm import Mapped, relationship
 
+from src.clients.database.base import Base
 from src.clients.database.models.anime_rating import AnimeRating
 from src.clients.database.models.user_anime_status import UserAnimeStatus
-from fastapi_users.db import SQLAlchemyBaseUserTableUUID
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):

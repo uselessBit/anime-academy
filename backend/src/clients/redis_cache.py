@@ -1,9 +1,9 @@
-import logging
-from fastapi.responses import JSONResponse
 import json
-from redis.asyncio import Redis
-from fastapi import Response
+import logging
 
+from fastapi import Response
+from fastapi.responses import JSONResponse
+from redis.asyncio import Redis
 
 from src.settings.redis import RedisSettings
 

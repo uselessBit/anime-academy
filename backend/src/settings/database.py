@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
+
 class DatabaseSettings(BaseSettings):
     host: str = "localhost"  # use bd_host=0.0.0.0 in env for local development
     port: int = 5432
