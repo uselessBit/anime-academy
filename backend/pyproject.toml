@@ -1,11 +1,11 @@
 [project]
 name = "backend"
 version = "0.1.0"
+package-mode = false
 description = ""
 authors = [
     {name = "d.drik",email = "27danik98@gmail.com"}
 ]
-readme = "README.md"
 requires-python = ">=3.11,<4.0.0"
 dependencies = [
     "fastapi-users[oauth,sqlalchemy] (>=14.0.1,<15.0.0)",
@@ -20,6 +20,10 @@ dependencies = [
     "redis (>=6.0.0,<7.0.0)",
 ]
 
+[tool.poetry]
+packages = [
+    { include = "src" },
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

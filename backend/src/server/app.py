@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
 from src.container import DependencyContainer, container
@@ -34,6 +35,6 @@ def create_application() -> CustomFastAPI:
     )
     server.add_middleware(CacheMiddleware, redis_cache=container.redis_cache())
     patch_exception_handlers(app=server)
-    # server.mount("/media", StaticFiles(directory="/media"), name="media")
+    server.mount("/media", StaticFiles(directory="/media"), name="media")  # noqa: ERA001
     server.include_router(api_v1_router)
     return server

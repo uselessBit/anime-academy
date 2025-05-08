@@ -3,3 +3,5 @@ media
 localhost-key.pem
 localhost.pem
 .env
+.history
+.ruff_cache
