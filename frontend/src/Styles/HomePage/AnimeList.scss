@@ -1,0 +1,44 @@
+@import '../Variables';
+
+.anime-catalog {
+    margin: 32px auto;
+    opacity: 0;
+    transition: opacity 0.3s;
+
+    .anime-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .anime-list-title {
+        font-size: 52px;
+        font-weight: 1000;
+        margin: 0;
+    }
+
+    .anime-top-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 64px 0 32px 0;
+    }
+}
+
+.anime-catalog.loaded {
+    opacity: 1;
+}
+
+@media (max-width: 950px) {
+    .anime-catalog {
+        .anime-list-title {
+            width: 200px;
+        }
+
+        .buttons-container {
+            flex-direction: column-reverse;
+        }
+    }
+}
