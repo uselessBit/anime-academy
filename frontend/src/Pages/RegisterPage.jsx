@@ -69,7 +69,7 @@ export default function RegisterPage() {
         <section className={`auth-container`}>
             <form onSubmit={handleSubmit}>
                 <img
-                    src="/logo/aniru.svg"
+                    src="/logo/logo.svg"
                     alt="aniru"
                     className="logo"
                     onClick={() => handleSwitch('/')}

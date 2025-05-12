@@ -36,7 +36,7 @@ const Header = () => {
             <div className={`header-back ${scrolled ? 'scrolled' : ''}`}>
                 <div className="header-align container">
                     <img
-                        src="/logo/aniru.svg"
+                        src="/logo/logo.svg"
                         alt="aniru"
                         className="logo"
                         onClick={() => handleSwitch('/')}
