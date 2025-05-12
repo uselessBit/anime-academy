@@ -25,7 +25,7 @@ body.scroll {
   outline: none;
   border: none;
   height: 48px;
-  border-radius: 48px;
+  border-radius: 16px;
   color: #fff;
   text-align: center;
   font-size: 16px;
@@ -83,7 +83,7 @@ body.scroll {
 .textarea {
   resize: none;
   height: 64px;
-  border-radius: 24px;
+  border-radius: 16px;
   padding: 8px;
 }
 
