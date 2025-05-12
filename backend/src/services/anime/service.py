@@ -1,44 +1,157 @@
 from collections.abc import Callable
 
 from fastcrud import FastCRUD
+from pydantic import TypeAdapter
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import delete, select
+from sqlalchemy.orm import selectinload
 
-from src.services.anime.interface import AnimeServiceI
-from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema
+from src.clients.database.models.anime import AnimeGenre, Anime
+from src.clients.database.models.genre import Genre
+from src.services.anime.interface import AnimeServiceI, AnimeGenreServiceI
+from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema, AnimeResponseSchema
 from src.services.base import BaseService
-from src.services.errors import AnimeNotFoundError
+from src.services.errors import AnimeNotFoundError, GenreNotFoundError
 from src.services.schemas import Image
-from src.services.static import anime_path
-from src.services.utils import delete_image, save_image
+from src.services.static import anime_path, relationship_not_found, genres_not_found
+from src.services.utils import delete_image, save_image, try_commit
 
 
 class AnimeService(BaseService, AnimeServiceI):
-    def __init__(self, session: Callable[..., AsyncSession], anime_crud: FastCRUD) -> None:
+
+    def __init__(
+        self, session: Callable[..., AsyncSession], anime_genre_service: AnimeGenreServiceI
+    ) -> None:
         super().__init__(session)
-        self.anime_crud = anime_crud
+        self.anime_genre_service = anime_genre_service
 
-    async def create(self, anime: CreateAnimeSchema, image: Image) -> None:
+    async def create(self, anime_data: CreateAnimeSchema, image: Image) -> None:
         async with self.session() as session:
+            query = select(Genre).where(Genre.id.in_(anime_data.genre_ids))
+            result = await session.execute(query)
+            genres = result.scalars().all()
+
+            if len(genres) != len(anime_data.genre_ids):
+                missing_ids = set(anime_data.genre_ids) - {
+                    genre.id for genre in genres
+                }
+                raise GenreNotFoundError(genres_not_found.format(missing_ids=missing_ids))
+
             image_url = await save_image(image, anime_path) if image.filename else None
             if image_url:
-                anime.image_url = image_url
-            await self.anime_crud.create(session, anime)
+                anime_data.image_url = image_url
 
-    async def update(self, anime_id: int, anime: UpdateAnimeSchema, image: Image) -> None:
+            new_anime = Anime(
+                title=anime_data.title,
+                description=anime_data.description,
+                image_url=image_url,
+                release_year=anime_data.release_year,
+                rating=anime_data.rating,
+            )
+            session.add(new_anime)
+            await try_commit(session, new_anime.title, delete_image, anime_path)
+            await session.flush()
+
+            for genre_id in anime_data.genre_ids:
+                await self.anime_genre_service.create(
+                    anime_id=new_anime.id,
+                    genre_id=genre_id,
+                )
+
+    async def get_multi(self, offset: int | None, limit: int | None) -> list[AnimeResponseSchema]:
         async with self.session() as session:
-            image_url = await save_image(image, anime_path) if image.filename else None
-            anime_model = await self.anime_crud.get(session, id=anime_id)
+            query = select(Anime).options(selectinload(Anime.genres))
+
+            if offset is not None:
+                query = query.offset(offset)
+            if limit is not None:
+                query = query.limit(limit)
+
+            result = await session.execute(query)
+            anime_list = result.scalars().all()
+
+            anime_data_list = [
+                {
+                    **anime.__dict__,
+                    "genre_ids": [g.id for g in anime.genres] if anime.genres else []
+                }
+                for anime in anime_list
+            ]
+
+            type_adapter = TypeAdapter(list[AnimeResponseSchema])
+            return type_adapter.validate_python(anime_data_list)
+
+    async def get(self, anime_id: int) -> AnimeResponseSchema:
+        async with self.session() as session:
+            query = select(Anime).options(selectinload(Anime.genres)).where(anime_id == Anime.id)
+
+            result = await session.execute(query)
+            anime = result.scalar_one_or_none()
+
+            genre_ids = [genre.id for genre in anime.genres] if anime.genres else []
+            anime_data = {
+                "id": anime.id,
+                "title": anime.title,
+                "description": anime.description,
+                "release_year": anime.release_year,
+                "image_url": anime.image_url,
+                "rating": anime.rating,
+                "genre_ids": genre_ids
+            }
+
+            return AnimeResponseSchema(**anime_data)
+
+    async def update(self, anime_id: int, anime_data: UpdateAnimeSchema, image: Image) -> None:
+        updates = anime_data.model_dump(exclude_unset=True)
+        image_url = await save_image(image, anime_path) if image.filename else None
+        async with self.session() as session:
+            anime = await session.get(Anime, anime_id)
+            if not anime:
+                raise AnimeNotFoundError
+
+            for attr, value in updates.items():
+                if attr != "genre_ids" and hasattr(anime, attr):
+                    setattr(anime, attr, value)
+
+            if "genre_ids" in updates:
+                await self.anime_genre_service.update(
+                    anime_id=anime_id,
+                    anime_data=anime_data,
+                )
+
             if image_url:
-                if filename := anime_model["image_url"]:
+                if filename := anime["image_url"]:
                     await delete_image(str(filename), anime_path)
-                anime.image_url = image_url
-            await self.anime_crud.update(session, anime, id=anime_id)
+                anime_data.image_url = image_url
+            await try_commit(session, anime_data.title, delete_image, anime_path)
 
     async def delete(self, anime_id: int) -> None:
         async with self.session() as session:
-            anime_model = await self.anime_crud.get(session, id=anime_id)
-            if not anime_model:
+            anime = await session.get(Anime, anime_id)
+            if not anime:
                 raise AnimeNotFoundError
-            if filename := anime_model["image_url"]:
+            if filename := anime["image_url"]:
                 await delete_image(str(filename), anime_path)
-            await self.anime_crud.delete(session, id=anime_id)
+            await session.delete(anime)
+            await session.commit()
+
+
+class AnimeGenreService(BaseService, AnimeGenreServiceI):
+    async def create(self, anime_id: int, genre_id: int) -> None:
+        async with self.session() as session:
+            new_anime_genre = AnimeGenre(anime_id=anime_id, genre_id=genre_id)
+            session.add(new_anime_genre)
+            await try_commit(session, str(anime_id))
+
+    async def update(self, anime_id: int, anime_data: UpdateAnimeSchema) -> None:
+        async with self.session() as session:
+            query = delete(AnimeGenre).where(anime_id == AnimeGenre.anime_id)
+            result = await session.execute(query)
+
+            if result.rowcount == 0:
+                raise AnimeNotFoundError(relationship_not_found)
+
+            for genre_id in anime_data.genre_ids:
+                new_product_ingredient = AnimeGenre(anime_id=anime_id, genre_id=genre_id)
+                session.add(new_product_ingredient)
+            await session.commit()

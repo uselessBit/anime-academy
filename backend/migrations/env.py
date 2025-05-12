@@ -33,7 +33,6 @@ from src.clients.database.models.user import *
 from src.clients.database.models.anime import *
 from src.clients.database.models.genre import *
 from src.clients.database.models.user_anime_status import *
-from src.clients.database.models.anime_genre import *
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

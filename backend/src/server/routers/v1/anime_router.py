@@ -1,45 +1,27 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, File, UploadFile
-from fastcrud import crud_router
 from starlette.responses import JSONResponse
 
-from src.clients.database.models.anime import Anime
 from src.container import container
 from src.services.anime.interface import AnimeServiceI
-from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema
+from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema, AnimeResponseSchema
 from src.services.schemas import Image
 from src.services.static import create_message, delete_message, update_message
+
+anime_tag = "Anime"
+anime_router = APIRouter(prefix="/anime", tags=[anime_tag])
 
 
 async def get_anime_service() -> AnimeServiceI:
     return container.anime_service()
 
 
-anime_tag = "Anime"
-anime_auto_router = crud_router(
-    session=container.database().get_db_session,
-    model=Anime,
-    create_schema=CreateAnimeSchema,
-    update_schema=UpdateAnimeSchema,
-    crud=container.anime_crud(),
-    included_methods=[
-        "read_multi",
-        "read",
-    ],
-    path="/anime",
-)
-anime_router = APIRouter(
-    tags=[anime_tag],
-)
-anime_router.include_router(anime_auto_router)
-
-
-@anime_router.post("/anime")
+@anime_router.post("/")
 async def create(
-    anime: CreateAnimeSchema,
-    file: UploadFile | None = File(None),
-    anime_service: AnimeServiceI = Depends(get_anime_service),
+        anime: CreateAnimeSchema,
+        file: UploadFile | None = File(None),
+        anime_service: AnimeServiceI = Depends(get_anime_service),
 ) -> JSONResponse:
     image = Image()
     if file:
@@ -49,12 +31,23 @@ async def create(
     return JSONResponse(content={"message": create_message.format(entity=anime_tag)}, status_code=HTTPStatus.CREATED)
 
 
-@anime_router.patch("/anime/{anime_id}")
+@anime_router.get("/", response_model=list[AnimeResponseSchema])
+async def get_multi(offset: int | None = None, limit: int | None = None,
+                    anime_service: AnimeServiceI = Depends(get_anime_service)) -> list[AnimeResponseSchema]:
+    return await anime_service.get_multi(offset, limit)
+
+
+@anime_router.get("/{anime_id}", response_model=AnimeResponseSchema)
+async def get(anime_id: int, anime_service: AnimeServiceI = Depends(get_anime_service)) -> AnimeResponseSchema:
+    return await anime_service.get(anime_id)
+
+
+@anime_router.patch("/{anime_id}")
 async def update(
-    anime_id: int,
-    anime: UpdateAnimeSchema,
-    file: UploadFile | None = File(None),
-    anime_service: AnimeServiceI = Depends(get_anime_service),
+        anime_id: int,
+        anime: UpdateAnimeSchema,
+        file: UploadFile | None = File(None),
+        anime_service: AnimeServiceI = Depends(get_anime_service),
 ) -> JSONResponse:
     image = Image()
     if file:
@@ -64,10 +57,10 @@ async def update(
     return JSONResponse(content={"message": update_message.format(entity=anime_tag)}, status_code=HTTPStatus.OK)
 
 
-@anime_router.delete("/anime/{anime_id}")
+@anime_router.delete("/{anime_id}")
 async def delete(
-    anime_id: int,
-    anime_service: AnimeServiceI = Depends(get_anime_service),
+        anime_id: int,
+        anime_service: AnimeServiceI = Depends(get_anime_service),
 ) -> JSONResponse:
     await anime_service.delete(anime_id)
     return JSONResponse(content={"message": delete_message.format(entity=anime_tag)}, status_code=HTTPStatus.OK)
