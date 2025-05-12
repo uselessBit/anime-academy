@@ -35,6 +35,6 @@ def create_application() -> CustomFastAPI:
     )
     server.add_middleware(CacheMiddleware, redis_cache=container.redis_cache())
     patch_exception_handlers(app=server)
-    # server.mount("/media", StaticFiles(directory="/media"), name="media")  # noqa: ERA001
+    server.mount("/media", StaticFiles(directory="/media"), name="media")  # noqa: ERA001
     server.include_router(api_v1_router)
     return server
