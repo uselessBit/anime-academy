@@ -11,7 +11,16 @@ export default function MainPoster() {
         const fetchMainAnime = async () => {
             setLoading(true)
             try {
-                const response = await fetch(`${API_BASE_URL}/api/anime/11`)
+                const response = await fetch(`${API_BASE_URL}/api/v1/crud/anime/1`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': 'http://localhost:5173'
+                    }
+                })
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+
                 const data = await response.json()
                 setMainAnime(data)
             } catch (error) {
@@ -24,8 +33,8 @@ export default function MainPoster() {
         fetchMainAnime()
     }, [])
 
-    if (loading) {
-        return <div></div>
+    if (loading || !mainAnime) {
+        return <div className="main-anime-container container"></div>
     }
 
     const handleImageLoad = () => {
@@ -35,19 +44,16 @@ export default function MainPoster() {
     }
 
     return (
-        <div
-            className={`main-anime-container container ${imageLoaded ? 'loaded' : ''}`}
-        >
+        <div className={`main-anime-container container ${imageLoaded ? 'loaded' : ''}`}>
             <div className="image-container">
                 <img
-                    src={'/posters/' + mainAnime.image_url + '.jpg'}
+                    src={mainAnime.image_url}
                     alt=""
                     className="main-anime blurred"
                     onLoad={handleImageLoad}
                 />
-
                 <img
-                    src={'/posters/' + mainAnime.image_url + '.jpg'}
+                    src={mainAnime.image_url}
                     alt=""
                     className="main-anime"
                 />
@@ -55,7 +61,7 @@ export default function MainPoster() {
 
             <div className="content-container">
                 <img
-                    src={'/logos/' + mainAnime.image_url + '.png'}
+                    src={mainAnime.image_url.replace('.jpg', '.png')}
                     alt="main-anime-logo"
                     className="main-anime-logo"
                 />
