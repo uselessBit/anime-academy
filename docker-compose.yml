@@ -30,7 +30,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - icons:/icons
+      - media:/media
     command: sh /backend/entrypoint.sh
     networks:
       - my_network
