@@ -10,4 +10,4 @@ class Genre(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    anime_genres: Mapped[list["AnimeGenre"]] = relationship(back_populates="genre", cascade="all, delete-orphan")
+    anime: Mapped[list["Anime"]] = relationship(back_populates="genres", secondary="anime_genres")

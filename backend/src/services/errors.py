@@ -19,6 +19,11 @@ class CommentNotFoundError(BaseError):
         super().__init__(message)
 
 
+class GenreNotFoundError(BaseError):
+    def __init__(self, message: str = "Genre not found error"):
+        super().__init__(message)
+
+
 class KeyAlreadyExistsError(BaseError):
     def __init__(self, name: str, message: str = "Name '{}' already exists"):
         formatted_message = message.format(name)
