@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import '../../Styles/HomePage/MainPoster.css'
 import API_BASE_URL from '../../config.js'
+
+axios.defaults.withCredentials = true
 
 export default function MainPoster() {
     const [loading, setLoading] = useState(true)
@@ -11,20 +14,15 @@ export default function MainPoster() {
         const fetchMainAnime = async () => {
             setLoading(true)
             try {
-                const response = await fetch(`${API_BASE_URL}/api/v1/crud/anime/1`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': 'http://localhost:5173'
-                    }
-                })
+                const response = await axios.get(`${API_BASE_URL}/api/v1/crud/anime/1`)
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-
-                const data = await response.json()
-                setMainAnime(data)
+                setMainAnime(response.data)
             } catch (error) {
                 console.error('Ошибка при загрузке данных:', error)
+                if (error.response) {
+                    console.log('Status:', error.response.status)
+                    console.log('Data:', error.response.data)
+                }
             } finally {
                 setLoading(false)
             }
