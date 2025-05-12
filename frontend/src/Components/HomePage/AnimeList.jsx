@@ -188,7 +188,7 @@ export default function AnimeList() {
                         >
                             Фильтры
                             <img
-                                src="/media/filters.svg"
+                                src="/icons/filters.svg"
                                 alt="?"
                                 className="button-icon"
                             />

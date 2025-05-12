@@ -100,7 +100,7 @@ const Search = () => {
                         spellCheck="false"
                     />
                     <img
-                        src="/media/search.svg"
+                        src="/icons/search.svg"
                         alt="🔍"
                         className="search-icon"
                     />

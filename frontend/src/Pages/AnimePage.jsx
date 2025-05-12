@@ -136,8 +136,8 @@ export default function AnimePage() {
                                     <img
                                         src={
                                             isFavorite
-                                                ? '/media/remove-from-favorite.svg'
-                                                : '/media/add-to-favorite.svg'
+                                                ? '/icons/remove-from-favorite.svg'
+                                                : '/icons/add-to-favorite.svg'
                                         }
                                         alt=""
                                         className="button-icon"
@@ -150,7 +150,7 @@ export default function AnimePage() {
                                     onClick={toggleReview}
                                 >
                                     <img
-                                        src="/media/star.svg"
+                                        src="/icons/star.svg"
                                         alt=""
                                         className="button-icon"
                                     />
@@ -174,7 +174,7 @@ export default function AnimePage() {
                             className="standard-input button filters-close"
                             onClick={onCloseReview}
                         >
-                            <img src="/media/close.svg" alt="x" />
+                            <img src="/icons/close.svg" alt="x" />
                         </button>
                     </div>
 

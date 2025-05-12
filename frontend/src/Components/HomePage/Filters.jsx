@@ -86,7 +86,7 @@ export default function Filters({
                         className="standard-input button filters-close"
                         onClick={onClose}
                     >
-                        <img src="/media/close.svg" alt="x" />
+                        <img src="/icons/close.svg" alt="x" />
                     </button>
                 </div>
 

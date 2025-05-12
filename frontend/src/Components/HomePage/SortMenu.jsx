@@ -25,7 +25,7 @@ export default function SortMenu({
                 onClick={toggleSortMenu}
             >
                 <img
-                    src="/media/sort.svg"
+                    src="/icons/sort.svg"
                     alt="?"
                     className={`button-icon ${activeButton ? 'reflect' : ''}`}
                 />

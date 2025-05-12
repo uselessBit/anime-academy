@@ -186,7 +186,7 @@ const ProfilePage = () => {
                                         onClick={startEditing}
                                     >
                                         <img
-                                            src="/media/edit.svg"
+                                            src="/icons/edit.svg"
                                             alt="?"
                                             className="button-icon"
                                         />
@@ -209,7 +209,7 @@ const ProfilePage = () => {
                                         }}
                                     >
                                         <img
-                                            src="/media/logout.svg"
+                                            src="/icons/logout.svg"
                                             alt="?"
                                             className="button-icon"
                                         />
@@ -237,7 +237,7 @@ const ProfilePage = () => {
                                         className="standard-input pagination-button"
                                     >
                                         <img
-                                            src="/media/arrow.svg"
+                                            src="/icons/arrow.svg"
                                             alt="⬇️"
                                             className="left"
                                         />
@@ -270,7 +270,7 @@ const ProfilePage = () => {
                                         className="standard-input pagination-button"
                                     >
                                         <img
-                                            src="/media/arrow.svg"
+                                            src="/icons/arrow.svg"
                                             alt="⬇️"
                                             className="right"
                                         />
