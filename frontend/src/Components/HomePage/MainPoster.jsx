@@ -3,7 +3,7 @@ import axios from 'axios'
 import '../../Styles/HomePage/MainPoster.css'
 import API_BASE_URL from '../../config.js'
 
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true
 
 export default function MainPoster() {
     const [loading, setLoading] = useState(true)
@@ -14,7 +14,9 @@ export default function MainPoster() {
         const fetchMainAnime = async () => {
             setLoading(true)
             try {
-                const response = await axios.get(`${API_BASE_URL}/api/v1/crud/anime/1`)
+                const response = await axios.get(
+                    `${API_BASE_URL}/api/v1/crud/anime/1`
+                )
 
                 setMainAnime(response.data)
             } catch (error) {
@@ -42,27 +44,36 @@ export default function MainPoster() {
     }
 
     return (
-        <div className={`main-anime-container container ${imageLoaded ? 'loaded' : ''}`}>
+        <div
+            className={`main-anime-container container ${imageLoaded ? 'loaded' : ''}`}
+        >
             <div className="image-container">
                 <img
-                    src={mainAnime.image_url}
+                    src={`${API_BASE_URL}/media/anime/${mainAnime.image_url}`}
                     alt=""
                     className="main-anime blurred"
                     onLoad={handleImageLoad}
                 />
                 <img
-                    src={mainAnime.image_url}
+                    src={`${API_BASE_URL}/media/anime/${mainAnime.image_url}`}
                     alt=""
                     className="main-anime"
                 />
             </div>
 
             <div className="content-container">
-                <img
-                    src={mainAnime.image_url.replace('.jpg', '.png')}
-                    alt="main-anime-logo"
-                    className="main-anime-logo"
-                />
+                <div>
+                    <h1>{mainAnime.title}</h1>
+                    <p>{mainAnime.description}</p>
+                </div>
+                <button className="standard-input button image-button active">
+                    <img
+                        src="/icons/play.svg"
+                        alt="?"
+                        className="button-icon"
+                    />
+                    Смотреть
+                </button>
             </div>
         </div>
     )
