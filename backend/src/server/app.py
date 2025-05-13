@@ -26,15 +26,15 @@ async def lifespan(app: FastAPI):
 def create_application() -> CustomFastAPI:
     server = CustomFastAPI(title="anime_academy", lifespan=lifespan)
     server.container = DependencyContainer()
+    server.add_middleware(CacheMiddleware, redis_cache=container.redis_cache())
     server.add_middleware(
         CORSMiddleware,
-        allow_origins=origins,
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    server.add_middleware(CacheMiddleware, redis_cache=container.redis_cache())
     patch_exception_handlers(app=server)
-    # server.mount("/media", StaticFiles(directory="/media"), name="media")  # noqa: ERA001
+    server.mount("/media", StaticFiles(directory="/media"), name="media")  # noqa: ERA001
     server.include_router(api_v1_router)
     return server
