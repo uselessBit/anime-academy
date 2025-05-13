@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Protocol
 
-from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema, AnimeResponseSchema
+from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema, AnimeResponseSchema, SortBy, Order
 from src.services.schemas import Image
 
 
@@ -10,7 +10,17 @@ class AnimeServiceI(Protocol):
     async def create(self, anime_data: CreateAnimeSchema, image: Image) -> None: ...
 
     @abstractmethod
-    async def get_multi(self, offset: int | None, limit: int | None) -> list[AnimeResponseSchema]: ...
+    async def get_multi(self,
+                        offset: int | None = None,
+                        limit: int | None = None,
+                        sort_by: SortBy = SortBy.TITLE,
+                        order: Order = Order.ASC,
+                        genre_ids: list[int] | None = None,
+                        min_year: int | None = None,
+                        max_year: int | None = None,
+                        min_rating: float | None = None,
+                        max_rating: float | None = None
+                        ) -> list[AnimeResponseSchema]: ...
 
     @abstractmethod
     async def get(self, anime_id: int) -> AnimeResponseSchema: ...

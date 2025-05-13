@@ -3,13 +3,13 @@ from collections.abc import Callable
 from fastcrud import FastCRUD
 from pydantic import TypeAdapter
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, exists
 from sqlalchemy.orm import selectinload
 
 from src.clients.database.models.anime import AnimeGenre, Anime
 from src.clients.database.models.genre import Genre
 from src.services.anime.interface import AnimeServiceI, AnimeGenreServiceI
-from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema, AnimeResponseSchema
+from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema, AnimeResponseSchema, SortBy, Order
 from src.services.base import BaseService
 from src.services.errors import AnimeNotFoundError, GenreNotFoundError
 from src.services.schemas import Image
@@ -58,9 +58,46 @@ class AnimeService(BaseService, AnimeServiceI):
                     genre_id=genre_id,
                 )
 
-    async def get_multi(self, offset: int | None, limit: int | None) -> list[AnimeResponseSchema]:
+    async def get_multi(
+            self,
+            offset: int | None = None,
+            limit: int | None = None,
+            sort_by: SortBy = SortBy.TITLE,
+            order: Order = Order.ASC,
+            genre_ids: list[int] | None = None,
+            min_year: int | None = None,
+            max_year: int | None = None,
+            min_rating: float | None = None,
+            max_rating: float | None = None
+    ) -> list[AnimeResponseSchema]:
         async with self.session() as session:
             query = select(Anime).options(selectinload(Anime.genres))
+
+            if genre_ids:
+                query = query.where(
+                    exists().where(
+                        AnimeGenre.anime_id == Anime.id,
+                        AnimeGenre.genre_id.in_(genre_ids)
+                    )
+                )
+
+            if min_year is not None and max_year is not None:
+                query = query.where(Anime.release_year.between(min_year, max_year))
+            elif min_year is not None:
+                query = query.where(Anime.release_year >= min_year)
+            elif max_year is not None:
+                query = query.where(Anime.release_year <= max_year)
+
+            if min_rating is not None:
+                query = query.where(Anime.rating >= min_rating)
+            if max_rating is not None:
+                query = query.where(Anime.rating <= max_rating)
+
+            order_attr = getattr(Anime, sort_by)
+            if order == Order.DESC:
+                query = query.order_by(order_attr.desc())
+            else:
+                query = query.order_by(order_attr.asc())
 
             if offset is not None:
                 query = query.offset(offset)
@@ -73,13 +110,12 @@ class AnimeService(BaseService, AnimeServiceI):
             anime_data_list = [
                 {
                     **anime.__dict__,
-                    "genre_ids": [g.id for g in anime.genres] if anime.genres else []
+                    "genre_ids": [genre.id for genre in anime.genres] if anime.genres else []
                 }
                 for anime in anime_list
             ]
 
-            type_adapter = TypeAdapter(list[AnimeResponseSchema])
-            return type_adapter.validate_python(anime_data_list)
+            return TypeAdapter(list[AnimeResponseSchema]).validate_python(anime_data_list)
 
     async def get(self, anime_id: int) -> AnimeResponseSchema:
         async with self.session() as session:
@@ -134,6 +170,7 @@ class AnimeService(BaseService, AnimeServiceI):
                 await delete_image(str(filename), anime_path)
             await session.delete(anime)
             await session.commit()
+
 
 
 class AnimeGenreService(BaseService, AnimeGenreServiceI):

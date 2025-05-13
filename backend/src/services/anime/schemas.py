@@ -1,4 +1,5 @@
 import json
+from enum import StrEnum
 
 from pydantic import BaseModel, model_validator
 
@@ -42,3 +43,14 @@ class UpdateAnimeSchema(BaseModel):
     @classmethod
     def to_py_dict(cls, data: str) -> dict:
         return json.loads(data)
+
+
+class SortBy(StrEnum):
+    TITLE = "title"
+    RELEASE_YEAR = "release_year"
+    RATING = "rating"
+
+
+class Order(StrEnum):
+    ASC = "asc"
+    DESC = "desc"

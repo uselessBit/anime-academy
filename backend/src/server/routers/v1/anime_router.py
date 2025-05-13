@@ -1,11 +1,11 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, UploadFile, Query
 from starlette.responses import JSONResponse
 
 from src.container import container
 from src.services.anime.interface import AnimeServiceI
-from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema, AnimeResponseSchema
+from src.services.anime.schemas import CreateAnimeSchema, UpdateAnimeSchema, AnimeResponseSchema, SortBy, Order
 from src.services.schemas import Image
 from src.services.static import create_message, delete_message, update_message
 
@@ -32,9 +32,17 @@ async def create(
 
 
 @anime_router.get("/", response_model=list[AnimeResponseSchema])
-async def get_multi(offset: int | None = None, limit: int | None = None,
+async def get_multi(offset: int | None = None,
+                    limit: int | None = None,
+                    sort_by: SortBy = SortBy.TITLE,
+                    order: Order = Order.ASC,
+                    genre_ids: list[int] | None = Query(None),
+                    min_year: int | None = None,
+                    max_year: int | None = None,
+                    min_rating: float | None = None,
+                    max_rating: float | None = None,
                     anime_service: AnimeServiceI = Depends(get_anime_service)) -> list[AnimeResponseSchema]:
-    return await anime_service.get_multi(offset, limit)
+    return await anime_service.get_multi(offset, limit, sort_by, order, genre_ids, min_year, max_year, min_rating, max_rating)
 
 
 @anime_router.get("/{anime_id}", response_model=AnimeResponseSchema)
