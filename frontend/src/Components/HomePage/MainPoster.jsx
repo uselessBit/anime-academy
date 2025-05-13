@@ -3,7 +3,7 @@ import axios from 'axios'
 import '../../Styles/HomePage/MainPoster.css'
 import API_BASE_URL from '../../config.js'
 
-axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true;
 
 export default function MainPoster() {
     const [loading, setLoading] = useState(true)
