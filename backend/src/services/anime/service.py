@@ -120,9 +120,9 @@ class AnimeService(BaseService, AnimeServiceI):
                 )
 
             if image_url:
-                if filename := anime["image_url"]:
+                if filename := anime.image_url:
                     await delete_image(str(filename), anime_path)
-                anime_data.image_url = image_url
+                anime.image_url = image_url
             await try_commit(session, anime_data.title, delete_image, anime_path)
 
     async def delete(self, anime_id: int) -> None:
