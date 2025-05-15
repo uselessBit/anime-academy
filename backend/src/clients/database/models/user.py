@@ -10,8 +10,11 @@ from src.clients.database.models.user_anime_status import UserAnimeStatus
 class User(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = "users"
 
+    email: Mapped[str] = mapped_column(
+        String(length=320), unique=True, index=True, nullable=True
+    )
     username: Mapped[str] = mapped_column(
-            String(length=320), unique=True, nullable=False
+        String(length=320), unique=True, nullable=False
     )
 
     ratings: Mapped[list["AnimeRating"]] = relationship(
