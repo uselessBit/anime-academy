@@ -7,3 +7,7 @@ class RedisSettings(BaseSettings):
     port: str = "6379"
     decode_responses: bool = True
     expiration: int = 60
+
+    @property
+    def url(self) -> str:
+        return f"redis://{self.host}:{self.port}"
