@@ -5,15 +5,14 @@ import {
     Routes,
     useLocation,
 } from 'react-router-dom'
-import './Styles/index.css'
-import Header from './Components/Header/Header.jsx'
-import HomePage from './Pages/HomePage.jsx'
-import RegisterPage from './Pages/RegisterPage.jsx'
-import LoginPage from './Pages/LoginPage.jsx'
-import ProfilePage from './Pages/ProfilePage.jsx'
-import AnimePage from './Pages/AnimePage.jsx'
-import AdminPage from './Pages/AdminPage.jsx'
-import { UserProvider } from './Context/UserProvider.jsx'
+import './styles/index.css'
+import Header from './components/header/Header.jsx'
+import HomePage from './pages/HomePage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import ProfilePage from './pages/ProfilePage.jsx'
+import AnimePage from './pages/AnimePage.jsx'
+import { UserProvider } from './context/UserProvider.jsx'
 
 function App() {
     const location = useLocation()
@@ -29,7 +28,6 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/anime/:id" element={<AnimePage />} />
-                <Route path="/admin" element={<AdminPage />} />{' '}
             </Routes>
         </UserProvider>
     )
