@@ -3,10 +3,11 @@ import '../../styles/homePage/AnimeList.css'
 import AnimeCard from '../AnimeCard.jsx'
 import Filters from './Filters.jsx'
 import SortMenu from './SortMenu.jsx'
+import { useAnime } from '../../hooks/useAnime.jsx'
 
 export default function AnimeList() {
     const [sortMenuVisible, setSortMenuVisible] = useState(false)
-    const [animeList] = useState([]) // Пустой массив вместо данных с бэкенда
+    const { animes, loading, error } = useAnime()
     const [originalAnimeList] = useState([])
     const [imagesLoad, setImagesLoad] = useState(false)
     const [sortButtonText, setSortButtonText] = useState('Сортировать')
@@ -29,8 +30,6 @@ export default function AnimeList() {
     }
 
     const toggleSortMenu = () => setSortMenuVisible(!sortMenuVisible)
-
-    const sortAnimeList = () => {} // Заглушка
 
     const resetSort = () => {
         setSortButtonText('Сортировать')
@@ -95,8 +94,8 @@ export default function AnimeList() {
                     </div>
                 </div>
                 <div className="anime-cards">
-                    {animeList.length > 0
-                        ? animeList.map((anime) => (
+                    {animes.length > 0
+                        ? animes.map((anime) => (
                               <AnimeCard
                                   key={`${anime.id}-${key}`}
                                   anime={anime}

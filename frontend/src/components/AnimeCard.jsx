@@ -3,6 +3,7 @@ import { useInView } from 'react-intersection-observer'
 import '../styles/AnimeCard.css'
 import AnimeRating from './AnimeRating.jsx'
 import usePageTransition from '../hooks/usePageTransition.jsx'
+import API_BASE_URL from '../config.js'
 
 export default function AnimeCard({ anime }) {
     const [fasterTransition, setFasterTransition] = useState(false)
@@ -29,7 +30,7 @@ export default function AnimeCard({ anime }) {
             onClick={() => handleSwitch(`/anime/${anime.id}`)}
         >
             <img
-                src={'/posters/' + anime.image_url + '.jpg'}
+                src={`${API_BASE_URL}media/anime/${anime.image_url}`}
                 alt=""
                 className="anime-blurred"
             />
@@ -39,7 +40,7 @@ export default function AnimeCard({ anime }) {
                 className={`anime-card ${inView ? 'visible' : ''}`}
             >
                 <img
-                    src={'/posters/' + anime.image_url + '.jpg'}
+                    src={`${API_BASE_URL}media/anime/${anime.image_url}`}
                     alt=""
                     className="anime-poster"
                 />
@@ -53,15 +54,11 @@ export default function AnimeCard({ anime }) {
                         </p>
                         <p>
                             <strong>Жанры:</strong>{' '}
-                            {anime.genres || 'Не указаны'}
+                            {anime.genres.join(', ') || 'Не указаны'}
                         </p>
                     </div>
 
-                    <img
-                        src={'/logos/' + anime.image_url + '.png'}
-                        alt=""
-                        className="anime-logo"
-                    />
+                    <h2 className="title">{anime.title}</h2>
                 </div>
             </div>
         </div>

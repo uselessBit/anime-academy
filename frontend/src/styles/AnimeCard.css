@@ -60,11 +60,11 @@
   transition: background-color 0.3s;
 }
 .anime-card .anime-content-container {
-  padding: 16px;
+  padding: 32px;
   opacity: 0;
   transform: translateY(60px);
   transition: opacity 0.3s, transform 0.3s;
-  height: calc(100% - 32px);
+  height: calc(100% - 64px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -79,7 +79,12 @@
   margin: 5px 0;
 }
 .anime-card .anime-text {
-  margin-top: 32px;
+  margin-top: 16px;
+}
+.anime-card .title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 900;
 }
 
 /*# sourceMappingURL=AnimeCard.css.map */
