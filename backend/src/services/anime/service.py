@@ -119,7 +119,7 @@ class AnimeService(BaseService, AnimeServiceI):
 
     async def get(self, anime_id: int) -> AnimeResponseSchema:
         async with self.session() as session:
-            query = select(Anime).options(selectinload(Anime.genres)).where(anime_id == Anime.id)
+            query = select(Anime).options(selectinload(Anime.genres)).where(Anime.id == anime_id)
 
             result = await session.execute(query)
             anime = result.scalar_one_or_none()
@@ -139,9 +139,11 @@ class AnimeService(BaseService, AnimeServiceI):
 
     async def update(self, anime_id: int, anime_data: UpdateAnimeSchema, image: Image) -> None:
         updates = anime_data.model_dump(exclude_unset=True)
-        image_url = await save_image(image, anime_path) if image.filename else None
         async with self.session() as session:
-            anime = await session.get(Anime, anime_id)
+            query = select(Anime).options(selectinload(Anime.genres)).where(Anime.id == anime_id)
+
+            result = await session.execute(query)
+            anime = result.scalar_one_or_none()
             if not anime:
                 raise AnimeNotFoundError
 
@@ -153,8 +155,10 @@ class AnimeService(BaseService, AnimeServiceI):
                 await self.anime_genre_service.update(
                     anime_id=anime_id,
                     anime_data=anime_data,
+                    anime_genres=anime.genres,
                 )
 
+            image_url = await save_image(image, anime_path) if image.filename else None
             if image_url:
                 if filename := anime.image_url:
                     await delete_image(str(filename), anime_path)
@@ -180,13 +184,14 @@ class AnimeGenreService(BaseService, AnimeGenreServiceI):
             session.add(new_anime_genre)
             await try_commit(session, str(anime_id))
 
-    async def update(self, anime_id: int, anime_data: UpdateAnimeSchema) -> None:
+    async def update(self, anime_id: int, anime_data: UpdateAnimeSchema, anime_genres: list[int]) -> None:
         async with self.session() as session:
-            query = delete(AnimeGenre).where(anime_id == AnimeGenre.anime_id)
-            result = await session.execute(query)
+            if anime_genres:
+                query = delete(AnimeGenre).where(AnimeGenre.anime_id == anime_id)
+                result = await session.execute(query)
 
-            if result.rowcount == 0:
-                raise AnimeNotFoundError(relationship_not_found)
+                if result.rowcount == 0:
+                    raise AnimeNotFoundError(relationship_not_found)
 
             for genre_id in anime_data.genre_ids:
                 new_product_ingredient = AnimeGenre(anime_id=anime_id, genre_id=genre_id)
