@@ -1,38 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useUser } from '../context/UserProvider.jsx'
+import { useAnime } from '../hooks/useAnime'
 import '../styles/animePage/AnimePage.css'
 import AnimeRating from '../components/AnimeRating.jsx'
 import API_BASE_URL from '../config.js'
 
 export default function AnimePage() {
     const { id } = useParams()
+    const { anime, loading, error } = useAnime(Number(id))
     const { user, favorites, addToFavorites, removeFromFavorites } = useUser()
-    const [anime, setAnime] = useState(null)
     const [reviews, setReviews] = useState([])
     const [newReview, setNewReview] = useState({ rating: '', review: '' })
-    const [error, setError] = useState(null)
-    const [review, setReview] = useState(false)
+    const [errorReview, setErrorReview] = useState(null)
+    const [reviewForm, setReviewForm] = useState(false)
 
-    const isFavorite = favorites.some((fav) => fav.id === parseInt(id, 10))
-
-    useEffect(() => {
-        fetch(`${API_BASE_URL}/api/anime/${id}`)
-            .then((response) => response.json())
-            .then((data) => setAnime(data))
-            .catch((error) => console.error('Error fetching anime:', error))
-
-        fetch(`${API_BASE_URL}/api/anime/${id}/reviews`)
-            .then((response) => response.json())
-            .then((data) => setReviews(data))
-            .catch((error) => console.error('Error fetching reviews:', error))
-    }, [id])
+    const isFavorite = favorites.some((fav) => fav.id === Number(id))
 
     const toggleFavorite = () => {
         if (isFavorite) {
-            removeFromFavorites(parseInt(id, 10))
+            removeFromFavorites(Number(id))
         } else {
-            addToFavorites(parseInt(id, 10))
+            addToFavorites(Number(id))
         }
     }
 
@@ -45,70 +34,64 @@ export default function AnimePage() {
         e.preventDefault()
 
         if (!newReview.rating || !newReview.review) {
-            setError('Пожалуйста, заполните все поля.')
+            setErrorReview('Пожалуйста, заполните все поля.')
             return
         }
 
-        fetch(`${API_BASE_URL}/api/anime/${id}/reviews`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify({
-                rating: newReview.rating,
-                review: newReview.review,
-            }),
-        })
-            .then(() => {
-                setNewReview({ rating: '', review: '' })
-                return fetch(`${API_BASE_URL}/api/anime/${id}/reviews`)
-            })
-            .then((response) => response.json())
-            .then((data) => setReviews(data))
-            .catch((error) => console.error('Error submitting review:', error))
+        const newReviewEntry = {
+            rating: newReview.rating,
+            review: newReview.review,
+            username: user.username,
+            avatar: user.avatar,
+            created_at: new Date().toISOString(),
+        }
+
+        setReviews((prev) => [...prev, newReviewEntry])
+        setNewReview({ rating: '', review: '' })
+        setErrorReview(null)
     }
 
-    const toggleReview = () => {
-        return setReview(!review)
-    }
-
-    const onCloseReview = () => {
-        return setReview(false)
-    }
+    const toggleReviewForm = () => setReviewForm(!reviewForm)
+    const onCloseReviewForm = () => setReviewForm(false)
 
     useEffect(() => {
-        if (review) document.body.style.overflow = 'hidden'
+        if (reviewForm) document.body.style.overflow = 'hidden'
         else document.body.style.overflow = 'auto'
 
         const handleKeydown = (e) => {
-            if (e.key === 'Escape') onCloseReview()
+            if (e.key === 'Escape') onCloseReviewForm()
         }
 
         window.addEventListener('keydown', handleKeydown)
 
         return () => {
             document.body.style.overflow = 'auto'
+            window.removeEventListener('keydown', handleKeydown)
         }
-    }, [review])
+    }, [reviewForm])
 
-    if (!anime) {
-        return <p></p>
-    }
+    if (loading)
+        return (
+            <div className="page container anime-container">
+                <div className="margin-container">Загрузка...</div>
+            </div>
+        )
+    if (error) return <div className="container">Ошибка: {error}</div>
+    if (!anime) return <div className="container">Аниме не найдено</div>
 
     return (
         <div className="container anime-container">
             <div className="margin-container">
-                <AnimeRating rating={anime.average_rating} />
+                <AnimeRating rating={anime.rating} />
                 <div className="top-container">
                     <div className="anime-poster">
                         <img
-                            src={`/posters/${anime.image_url}.jpg`}
+                            src={`${API_BASE_URL}media/anime/${anime.image_url}`}
                             alt={anime.title}
                             className="blurred"
                         />
                         <img
-                            src={`/posters/${anime.image_url}.jpg`}
+                            src={`${API_BASE_URL}media/anime/${anime.image_url}`}
                             alt={anime.title}
                             className="main"
                         />
@@ -121,7 +104,7 @@ export default function AnimePage() {
                             <strong>Год:</strong> {anime.release_year}
                         </p>
                         <p>
-                            <strong>Жанры:</strong> {anime.genres}
+                            <strong>Жанры:</strong> {anime.genres?.join(', ')}
                         </p>
                         <p>
                             <strong>Описание:</strong> {anime.description}
@@ -147,7 +130,7 @@ export default function AnimePage() {
 
                                 <button
                                     className="standard-input image-button button"
-                                    onClick={toggleReview}
+                                    onClick={toggleReviewForm}
                                 >
                                     <img
                                         src="/icons/star.svg"
@@ -161,24 +144,28 @@ export default function AnimePage() {
                     </div>
                 </div>
 
+                {/* Форма отзыва */}
                 <div
-                    className={`overlay ${review ? 'active' : ''}`}
-                    onClick={onCloseReview}
+                    className={`overlay ${reviewForm ? 'active' : ''}`}
+                    onClick={onCloseReviewForm}
                 />
                 <div
-                    className={`filters-container container ${review ? 'active' : ''}`}
+                    className={`filters-container container ${reviewForm ? 'active' : ''}`}
                 >
                     <div className="filters-top-container">
                         <h1 className="filters-title">Оставить отзыв</h1>
                         <button
                             className="standard-input button filters-close"
-                            onClick={onCloseReview}
+                            onClick={onCloseReviewForm}
                         >
                             <img src="/icons/close.svg" alt="x" />
                         </button>
                     </div>
 
                     <div className="filters-content-container review-form">
+                        {errorReview && (
+                            <div className="error">{errorReview}</div>
+                        )}
                         <div className="add-item">
                             <label htmlFor="rating">Рейтинг:</label>
                             <div className="rating-buttons">
@@ -222,6 +209,7 @@ export default function AnimePage() {
                     </div>
                 </div>
 
+                {/* Секция отзывов */}
                 <div className="reviews-container">
                     <h2>Отзывы:</h2>
                     {reviews.length > 0 ? (
@@ -231,12 +219,12 @@ export default function AnimePage() {
                                     <AnimeRating rating={review.rating} />
                                     <div className="image-container">
                                         <img
-                                            src={`${API_BASE_URL}/uploads/avatars/${review.avatar}`}
+                                            src={review.avatar}
                                             alt="avatar"
                                             className="profile-image blurred"
                                         />
                                         <img
-                                            src={`${API_BASE_URL}/uploads/avatars/${review.avatar}`}
+                                            src={review.avatar}
                                             alt="avatar"
                                             className="profile-image main"
                                         />
