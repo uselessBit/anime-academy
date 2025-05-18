@@ -9,15 +9,15 @@ export default function AnimeCard({ anime }) {
     const [fasterTransition, setFasterTransition] = useState(false)
     const { ref, inView } = useInView({
         threshold: 0.1,
+        triggerOnce: true,
     })
     const { handleSwitch } = usePageTransition()
 
     React.useEffect(() => {
         if (inView) {
-            const timer = setTimeout(() => {
+            setTimeout(() => {
                 setFasterTransition(true)
             }, 900)
-            return () => clearTimeout(timer)
         }
     }, [inView])
 
