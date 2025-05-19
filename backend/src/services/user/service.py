@@ -8,12 +8,15 @@ from fastapi_users.authentication import (
     CookieTransport,
     JWTStrategy,
 )
-from fastapi_users.db import SQLAlchemyUserDatabase
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_users.password import PasswordHelper
+from fastapi.security import OAuth2PasswordRequestForm
 
 from src.clients.database.models.user import User
 from src.container import container
 from src.settings.user_settins import UserSettings
+from fastapi_users.db import SQLAlchemyUserDatabase
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 user_settings = UserSettings()
 
@@ -33,9 +36,31 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     async def on_after_request_verify(self, user: User, token: str, request: Request | None = None):
         logger.info("Verification requested for user %s. Verification token: %s", user.id, token)
 
+    async def authenticate(
+            self, credentials: OAuth2PasswordRequestForm
+    ) -> models.UserProtocol | None:
+        user = await self.user_db.get_by_username(credentials.username)
+        if not user:
+            return None
+
+        password_helper = PasswordHelper()
+        verified, _ = password_helper.verify_and_update(
+            credentials.password, user.hashed_password
+        )
+        if not verified:
+            return None
+
+        return user
+
+
+class CustomSQLAlchemyUserDatabase(SQLAlchemyUserDatabase):
+    async def get_by_username(self, username: str):
+        query = select(self.user_table).where(username == self.user_table.username)
+        return await self.session.scalar(query)
+
 
 async def get_user_db(session: AsyncSession = Depends(container.database_session_no_context())):
-    yield SQLAlchemyUserDatabase(session, User)
+    yield CustomSQLAlchemyUserDatabase(session, User)
 
 
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
