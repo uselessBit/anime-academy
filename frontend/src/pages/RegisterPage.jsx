@@ -52,6 +52,9 @@ export default function RegisterPage() {
         if (!/\d/.test(password)) errors.push('Добавьте минимум одну цифру')
         if (!/[A-Z]/.test(password))
             errors.push('Добавьте минимум одну заглавную букву')
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            errors.push('Добавьте минимум один специальный символ')
+        }
         if (password !== confirmPassword) errors.push('Пароли не совпадают')
 
         return errors

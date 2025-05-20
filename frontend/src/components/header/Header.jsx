@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import usePageTransition from '../../hooks/usePageTransition.jsx'
-import { useUser } from '../../context/UserProvider.jsx'
+import { useAuth } from '../../hooks/useAuth' // Заменяем контекст на хук
 import '../../styles/Header.css'
 import Search from './Search.jsx'
 
 const Header = () => {
-    const { user } = useUser()
+    const { user } = useAuth() // Получаем пользователя из хука
     const [animation, setAnimation] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const { handleSwitch } = usePageTransition()
 
+    // Анимация появления шапки
     setTimeout(() => {
         setAnimation(true)
     }, 600)
 
+    // Отслеживание скролла
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 0) setScrolled(true)
-            else setScrolled(false)
+            setScrolled(window.scrollY > 0)
         }
-
         window.addEventListener('scroll', handleScroll)
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll)
-        }
+        return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
     return (

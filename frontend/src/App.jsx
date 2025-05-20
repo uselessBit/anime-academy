@@ -12,15 +12,14 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import AnimePage from './pages/AnimePage.jsx'
-import { UserProvider } from './context/UserProvider.jsx'
 
-function App() {
+const AppContent = () => {
     const location = useLocation()
     const hideHeaderPaths = ['/register', '/login']
     const showHeader = !hideHeaderPaths.includes(location.pathname)
 
     return (
-        <UserProvider>
+        <>
             {showHeader && <Header />}
             <Routes>
                 <Route path="/" element={<HomePage />} />
@@ -29,14 +28,14 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/anime/:id" element={<AnimePage />} />
             </Routes>
-        </UserProvider>
+        </>
     )
 }
 
-export default function Root() {
+export default function App() {
     return (
         <Router>
-            <App />
+            <AppContent />
         </Router>
     )
 }
