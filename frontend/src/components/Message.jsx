@@ -1,8 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import '../styles/Message.css'
 
-export default function Message({ text, type, isVisible }) {
+const Message = ({ text, type, isVisible }) => {
+    const [isActive, setIsActive] = useState(false)
+
+    useEffect(() => {
+        if (isVisible) {
+            setIsActive(true)
+            return () => setIsActive(false)
+        }
+    }, [isVisible])
+
     return (
-        <p className={`message ${type} ${isVisible ? 'active' : ''}`}>{text}</p>
+        <div className={`message ${type} ${isActive ? 'active' : ''}`}>
+            {text}
+        </div>
     )
 }
+
+export default Message

@@ -1,105 +1,120 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import usePageTransition from '../hooks/usePageTransition.jsx'
 import Message from '../components/Message.jsx'
-import { useUser } from '../context/UserProvider.jsx'
+import { useRegister } from '../hooks/useRegister'
 import '../styles/Auth.css'
 
 export default function RegisterPage() {
-    const [mail, setMail] = useState('')
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [error, setError] = useState('')
-    const [success, setSuccess] = useState('')
-    const [errorCheck, setErrorCheck] = useState(false)
-    const [messageCheck, setMessageCheck] = useState(false)
-    const { register } = useUser() // Используем метод регистрации из контекста
-    const { handleSwitch } = usePageTransition()
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+        confirmPassword: '',
+    })
+    const [message, setMessage] = useState({
+        text: '',
+        type: '',
+        visible: false,
+    })
+    const { register, loading } = useRegister()
+    const { handleSwitch } = usePageTransition() // Используем кастомный хук
 
+    // Автоматическое скрытие сообщения
     useEffect(() => {
-        document.body.style.overflow = 'hidden'
-    }, [])
+        if (message.visible) {
+            const timer = setTimeout(() => {
+                setMessage((prev) => ({ ...prev, visible: false }))
+            }, 3000)
+            return () => clearTimeout(timer)
+        }
+    }, [message.visible])
 
-    const handleSetError = (msg) => {
-        setError(msg)
-    }
+    // Сброс сообщений при изменении данных
+    useEffect(() => {
+        if (message.visible) {
+            setMessage((prev) => ({ ...prev, visible: false }))
+        }
+    }, [formData])
 
     const validateForm = () => {
-        if (password.length < 6) {
-            handleSetError('Пароль должен содержать минимум 6 символов')
-            setErrorCheck(true)
-            return false
-        } else if (password !== confirmPassword) {
-            handleSetError('Пароли не совпадают')
-            setErrorCheck(true)
-            return false
-        } else {
-            return true
+        const errors = []
+        const { username, password, confirmPassword } = formData
+
+        if (username.length < 3)
+            errors.push('Имя должно быть не менее 3 символов')
+        if (username.length > 20)
+            errors.push('Имя должно быть не длиннее 20 символов')
+        if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+            errors.push('Разрешены только буквы, цифры и подчеркивание')
         }
+
+        if (password.length < 8)
+            errors.push('Пароль должен быть не менее 8 символов')
+        if (!/\d/.test(password)) errors.push('Добавьте минимум одну цифру')
+        if (!/[A-Z]/.test(password))
+            errors.push('Добавьте минимум одну заглавную букву')
+        if (password !== confirmPassword) errors.push('Пароли не совпадают')
+
+        return errors
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        const errors = validateForm()
 
-        if (!validateForm()) return
+        if (errors.length > 0) {
+            setMessage({ text: errors[0], type: 'error', visible: true })
+            return
+        }
 
-        const message = await register(username, password)
-
-        if (message) {
-            setSuccess('Аккаунт создан!')
-            setMessageCheck(true)
+        try {
+            await register(formData.username, formData.password)
+            setMessage({
+                text: 'Аккаунт успешно создан!',
+                type: 'success',
+                visible: true,
+            })
             setTimeout(() => {
-                handleSwitch('/login')
-            }, 1200)
-        } else {
-            setError('Произошла ошибка при регистрации')
-            setErrorCheck(true)
+                handleSwitch('/login') // Используем кастомный переход
+            }, 1500)
+        } catch (err) {
+            setMessage({
+                text: err.message || 'Ошибка регистрации',
+                type: 'error',
+                visible: true,
+            })
         }
     }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
-        if (name === 'mail') setMail(value)
-        if (name === 'username') setUsername(value)
-        if (name === 'password') setPassword(value)
-        if (name === 'confirmPassword') setConfirmPassword(value)
-
-        setErrorCheck(false)
+        setFormData((prev) => ({ ...prev, [name]: value }))
     }
 
     return (
-        <section className={`auth-container`}>
+        <section className="auth-container">
             <form onSubmit={handleSubmit}>
                 <img
                     src="/logo/logo.svg"
-                    alt="aniru"
+                    alt="logo"
                     className="logo"
-                    onClick={() => handleSwitch('/')}
-                />
-
-                <input
-                    type="text"
-                    name="mail"
-                    placeholder="Почта"
-                    value={mail}
-                    onChange={handleInputChange}
-                    required
+                    onClick={() => handleSwitch('/')} // Кастомный переход
                 />
 
                 <input
                     type="text"
                     name="username"
-                    placeholder="Имя пользователя"
-                    value={username}
+                    placeholder="Имя пользователя (3-20 символов)"
+                    value={formData.username}
                     onChange={handleInputChange}
+                    maxLength={20}
                     required
                 />
 
                 <input
                     type="password"
                     name="password"
-                    placeholder="Пароль"
-                    value={password}
+                    placeholder="Пароль (минимум 8 символов)"
+                    value={formData.password}
                     onChange={handleInputChange}
                     required
                 />
@@ -108,24 +123,29 @@ export default function RegisterPage() {
                     type="password"
                     name="confirmPassword"
                     placeholder="Повторите пароль"
-                    value={confirmPassword}
+                    value={formData.confirmPassword}
                     onChange={handleInputChange}
                     required
                 />
 
-                <button type="submit">Создать аккаунт</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Регистрация...' : 'Создать аккаунт'}
+                </button>
 
                 <button
                     type="button"
-                    onClick={() => handleSwitch('/login', true)}
                     className="move-button"
+                    onClick={() => handleSwitch('/login', true)} // Кастомный переход с анимацией
                 >
-                    Войти
+                    Уже есть аккаунт? Войти
                 </button>
-            </form>
 
-            <Message text={error} type="error" isVisible={errorCheck} />
-            <Message text={success} type="success" isVisible={messageCheck} />
+                <Message
+                    text={message.text}
+                    type={message.type}
+                    isVisible={message.visible}
+                />
+            </form>
         </section>
     )
 }

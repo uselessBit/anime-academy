@@ -5,7 +5,7 @@ import Message from '../components/Message.jsx'
 import '../styles/Auth.css'
 
 export default function LoginPage() {
-    const [mail, setMail] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
@@ -51,7 +51,7 @@ export default function LoginPage() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
-        if (name === 'mail') setMail(value)
+        if (name === 'username') setUsername(value)
         if (name === 'password') setPassword(value)
 
         setErrorCheck(false)
@@ -68,9 +68,9 @@ export default function LoginPage() {
                 />
                 <input
                     type="text"
-                    name="mail"
-                    placeholder="Почта"
-                    value={mail}
+                    name="username"
+                    placeholder="Имя пользователя"
+                    value={username}
                     onChange={handleInputChange}
                     required
                 />

@@ -1,28 +1,27 @@
 import axios from 'axios'
 import API_BASE_URL from '../config'
 
-let cachedUsers = null
-
 export const UserService = {
-    async fetchAllUsers() {
-        if (cachedUsers) return cachedUsers
-
+    register: async (username, password) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}api/v1/users/`)
-            cachedUsers = response.data
-            return cachedUsers
+            const response = await axios.post(
+                `${API_BASE_URL}api/v1/auth/register`,
+                { username, password },
+                {
+                    headers: {
+                        accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                }
+            )
+            return response.data
         } catch (error) {
-            console.error('Error fetching users:', error)
-            throw error
+            if (error.response) {
+                throw new Error(
+                    error.response.data.detail || 'Ошибка регистрации'
+                )
+            }
+            throw new Error('Сервер не отвечает')
         }
-    },
-
-    getUserById(userId) {
-        if (!cachedUsers) return null
-        return cachedUsers.find((user) => user.id === userId)
-    },
-
-    refreshCache() {
-        cachedUsers = null
     },
 }

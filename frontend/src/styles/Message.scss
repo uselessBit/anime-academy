@@ -1,6 +1,6 @@
 .message {
-    position: absolute;
-    bottom: 0;
+    position: fixed;
+    bottom: 20px;
     left: 50%;
     background-color: rgba(255, 255, 255, 0.15);
     padding: 16px 64px;
@@ -8,27 +8,28 @@
     user-select: none;
     font-weight: 600;
     font-size: 16px;
-    opacity: 0;
     text-align: center;
     width: max-content;
     max-width: calc(100vw - 64px);
-    transform: translateX(-50%) translateY(64px);
-    transition:
-        transform 0.3s,
-        opacity 0.3s;
+    opacity: 0;
+    transform: translate(-50%, 20px);
+    transition: all 0.4s ease-out;
+    z-index: 1000;
+    margin: 0 auto;
+    pointer-events: none;
+}
 
-    &.active {
-        opacity: 1;
-        transform: translateX(-50%);
-    }
+.message.active {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
 
-    &.error {
-        color: #ffffff;
-        background-color: #aa0000;
-    }
+.message.error {
+    color: #ffffff;
+    background-color: #aa0000;
+}
 
-    &.success {
-        color: #ffffff;
-        background-color: #228e01;
-    }
+.message.success {
+    color: #ffffff;
+    background-color: #228e01;
 }
