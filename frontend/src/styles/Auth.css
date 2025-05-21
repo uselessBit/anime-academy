@@ -11,9 +11,9 @@
   opacity: 1;
   transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
 }
+.auth-container .align-container,
 .auth-container form {
   width: 400px;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,11 +21,15 @@
   align-items: center;
   gap: 32px;
 }
+.auth-container .align-container .logo,
 .auth-container form .logo {
   width: 220px;
   max-width: 100%;
   cursor: pointer;
 }
+.auth-container .align-container .move-button,
+.auth-container .align-container button,
+.auth-container .align-container input,
 .auth-container form .move-button,
 .auth-container form button,
 .auth-container form input {
@@ -39,20 +43,38 @@
   border: none;
   transition: color 0.3s, background-color 0.3s;
 }
+.auth-container .align-container input,
 .auth-container form input {
   background: transparent;
   color: white;
   outline: rgba(238, 238, 238, 0.4) solid 2px;
+  transition: outline 0.3s;
 }
+.auth-container .align-container input:hover,
+.auth-container form input:hover {
+  outline: rgb(238, 238, 238) solid 2px;
+}
+.auth-container .align-container .move-button,
 .auth-container form .move-button {
   background-color: rgba(238, 238, 238, 0.15);
   color: white;
 }
+.auth-container .align-container .move-button:hover,
 .auth-container form .move-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
 }
+.auth-container .align-container button,
 .auth-container form button {
   cursor: pointer;
+}
+.auth-container .align-container .to-min-button,
+.auth-container form .to-min-button {
+  background-color: rgba(238, 238, 238, 0);
+  color: rgb(238, 238, 238);
+}
+.auth-container .align-container .to-min-button:hover,
+.auth-container form .to-min-button:hover {
+  background-color: rgba(238, 238, 238, 0.05);
 }
 
 /*# sourceMappingURL=Auth.css.map */

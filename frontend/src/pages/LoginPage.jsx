@@ -45,7 +45,7 @@ export default function LoginPage() {
 
     return (
         <section className="auth-container">
-            <form onSubmit={handleSubmit}>
+            <div className="align-container">
                 <img
                     src="/logo/logo.svg"
                     alt="aniru"
@@ -53,36 +53,45 @@ export default function LoginPage() {
                     onClick={() => handleSwitch('/')}
                 />
 
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="Имя пользователя"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Имя пользователя"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Пароль"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Пароль"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
 
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Вход...' : 'Войти'}
-                </button>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Вход...' : 'Войти'}
+                    </button>
+
+                    <button
+                        type="button"
+                        className="move-button"
+                        onClick={() => handleSwitch('/register', true)}
+                    >
+                        Создать аккаунт
+                    </button>
+                </form>
 
                 <button
-                    type="button"
-                    className="move-button"
-                    onClick={() => handleSwitch('/register', true)}
+                    className="to-min-button"
+                    onClick={() => handleSwitch('/')}
                 >
-                    Создать аккаунт
+                    На главную
                 </button>
-            </form>
+            </div>
 
             {/* Сообщения об ошибках и успехе */}
             <Message

@@ -15,9 +15,9 @@
         opacity 0.6s ease-in-out,
         transform 0.6s ease-in-out;
 
+    .align-container,
     form {
         width: 400px;
-        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -51,19 +51,32 @@
             background: transparent;
             color: white;
             outline: rgba(238, 238, 238, 0.4) solid 2px;
+            transition: outline 0.3s;
+
+            &:hover {
+                outline: rgba(238, 238, 238, 1) solid 2px;
+            }
         }
 
         .move-button {
             background-color: rgba(238, 238, 238, 0.15);
             color: white;
-        }
 
-        .move-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
         }
 
         button {
             cursor: pointer;
+        }
+
+        .to-min-button {
+            background-color: rgba(238, 238, 238, 0);
+            color: rgb(238, 238, 238);
+            &:hover {
+                background-color: rgba(238, 238, 238, 0.05);
+            }
         }
     }
 }

@@ -95,60 +95,69 @@ export default function RegisterPage() {
 
     return (
         <section className="auth-container">
-            <form onSubmit={handleSubmit}>
+            <div className="align-container">
                 <img
                     src="/logo/logo.svg"
-                    alt="logo"
+                    alt="aniru"
                     className="logo"
-                    onClick={() => handleSwitch('/')} // Кастомный переход
+                    onClick={() => handleSwitch('/')}
                 />
 
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="Имя пользователя (3-20 символов)"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    maxLength={20}
-                    required
-                />
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Имя пользователя (3-20 символов)"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        maxLength={20}
+                        required
+                    />
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Пароль (минимум 8 символов)"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                />
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Пароль (минимум 8 символов)"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                    />
 
-                <input
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="Повторите пароль"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    required
-                />
+                    <input
+                        type="password"
+                        name="confirmPassword"
+                        placeholder="Повторите пароль"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        required
+                    />
 
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Регистрация...' : 'Создать аккаунт'}
-                </button>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Регистрация...' : 'Создать аккаунт'}
+                    </button>
+
+                    <button
+                        type="button"
+                        className="move-button"
+                        onClick={() => handleSwitch('/login', true)} // Кастомный переход с анимацией
+                    >
+                        Уже есть аккаунт? Войти
+                    </button>
+                </form>
 
                 <button
-                    type="button"
-                    className="move-button"
-                    onClick={() => handleSwitch('/login', true)} // Кастомный переход с анимацией
+                    className="to-min-button"
+                    onClick={() => handleSwitch('/')}
                 >
-                    Уже есть аккаунт? Войти
+                    На главную
                 </button>
+            </div>
 
-                <Message
-                    text={message.text}
-                    type={message.type}
-                    isVisible={message.visible}
-                />
-            </form>
+            <Message
+                text={message.text}
+                type={message.type}
+                isVisible={message.visible}
+            />
         </section>
     )
 }
