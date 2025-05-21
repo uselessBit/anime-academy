@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../hooks/useAuth' // Импортируем новый хук
+import { useAuth } from '../hooks/useAuth'
 import usePageTransition from '../hooks/usePageTransition.jsx'
 import Message from '../components/Message.jsx'
 import '../styles/Auth.css'
+import { TbEye, TbEyeClosed } from 'react-icons/tb'
 
 export default function LoginPage() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const { user, login, loading, error } = useAuth() // Используем методы из useAuth
+    const { user, login, loading, error } = useAuth()
     const { handleSwitch } = usePageTransition()
 
-    // Состояния для управления сообщениями
     const [showSuccess, setShowSuccess] = useState(false)
     const [showError, setShowError] = useState(false)
+
+    const [showPassword, setShowPassword] = useState(false)
 
     useEffect(() => {
         document.body.style.overflow = 'hidden'
     }, [])
 
-    // Обработка ошибок из хука
     useEffect(() => {
         if (error) {
             setShowError(true)
@@ -38,9 +39,7 @@ export default function LoginPage() {
         e.preventDefault()
         try {
             await login(username, password)
-        } catch {
-            // Ошибка уже обработана в хуке
-        }
+        } catch {}
     }
 
     return (
@@ -63,14 +62,27 @@ export default function LoginPage() {
                         required
                     />
 
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Пароль"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+                    <div className="password-wrapper">
+                        <input
+                            type={showPassword ? 'text' : 'password'}
+                            name="password"
+                            placeholder="Пароль"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <button
+                            type="button"
+                            className="password-toggle"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? (
+                                <TbEyeClosed size={24} />
+                            ) : (
+                                <TbEye size={24} />
+                            )}
+                        </button>
+                    </div>
 
                     <button type="submit" disabled={loading}>
                         {loading ? 'Вход...' : 'Войти'}
@@ -93,7 +105,6 @@ export default function LoginPage() {
                 </button>
             </div>
 
-            {/* Сообщения об ошибках и успехе */}
             <Message
                 text={error || 'Неверные учетные данные'}
                 type="error"

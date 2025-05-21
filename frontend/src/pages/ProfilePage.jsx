@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useUser } from '../context/UserProvider.jsx'
 import '../styles/profilePage/ProfilePage.css'
 import AnimeCard from '../components/AnimeCard.jsx'
 import usePageTransition from '../hooks/usePageTransition.jsx'
@@ -9,8 +8,6 @@ const ITEMS_VISIBLE = 3
 
 const ProfilePage = () => {
     const { handleSwitch } = usePageTransition()
-    const { user, reviews, favorites, logout, updateUserData, getUserReviews } =
-        useUser()
     const [isEditing, setIsEditing] = useState(false)
     const [updatedUser, setUpdatedUser] = useState({
         username: user?.username || '',

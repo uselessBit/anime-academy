@@ -78,5 +78,29 @@
                 background-color: rgba(238, 238, 238, 0.05);
             }
         }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 8px;
+            cursor: pointer;
+            color: rgba(238, 238, 238, 0.4);
+            background: none;
+            border: none;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+
+            &:hover {
+                color: rgba(238, 238, 238, 1);
+            }
+        }
     }
 }

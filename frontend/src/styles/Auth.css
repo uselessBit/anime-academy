@@ -76,5 +76,29 @@
 .auth-container form .to-min-button:hover {
   background-color: rgba(238, 238, 238, 0.05);
 }
+.auth-container .align-container .password-wrapper,
+.auth-container form .password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.auth-container .align-container .password-toggle,
+.auth-container form .password-toggle {
+  position: absolute;
+  right: 8px;
+  cursor: pointer;
+  color: rgba(238, 238, 238, 0.4);
+  background: none;
+  border: none;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+}
+.auth-container .align-container .password-toggle:hover,
+.auth-container form .password-toggle:hover {
+  color: rgb(238, 238, 238);
+}
 
 /*# sourceMappingURL=Auth.css.map */

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useUser } from '../context/UserProvider.jsx'
 import { useAnime } from '../hooks/useAnime'
 import '../styles/animePage/AnimePage.css'
 import AnimeRating from '../components/AnimeRating.jsx'
@@ -9,7 +8,6 @@ import API_BASE_URL from '../config.js'
 export default function AnimePage() {
     const { id } = useParams()
     const { anime, loading, error } = useAnime(Number(id))
-    const { user, favorites, addToFavorites, removeFromFavorites } = useUser()
     const [reviews, setReviews] = useState([])
     const [newReview, setNewReview] = useState({ rating: '', review: '' })
     const [errorReview, setErrorReview] = useState(null)

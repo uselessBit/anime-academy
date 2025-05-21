@@ -3,6 +3,7 @@ import usePageTransition from '../hooks/usePageTransition.jsx'
 import Message from '../components/Message.jsx'
 import { useRegister } from '../hooks/useRegister'
 import '../styles/Auth.css'
+import { TbEye, TbEyeClosed } from 'react-icons/tb'
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -15,10 +16,15 @@ export default function RegisterPage() {
         type: '',
         visible: false,
     })
-    const { register, loading } = useRegister()
-    const { handleSwitch } = usePageTransition() // Используем кастомный хук
 
-    // Автоматическое скрытие сообщения
+    const { register, loading } = useRegister()
+    const { handleSwitch } = usePageTransition()
+
+    const [showPassword, setShowPassword] = useState({
+        password: false,
+        confirmPassword: false,
+    })
+
     useEffect(() => {
         if (message.visible) {
             const timer = setTimeout(() => {
@@ -28,7 +34,6 @@ export default function RegisterPage() {
         }
     }, [message.visible])
 
-    // Сброс сообщений при изменении данных
     useEffect(() => {
         if (message.visible) {
             setMessage((prev) => ({ ...prev, visible: false }))
@@ -77,7 +82,7 @@ export default function RegisterPage() {
                 visible: true,
             })
             setTimeout(() => {
-                handleSwitch('/login') // Используем кастомный переход
+                handleSwitch('/login')
             }, 1500)
         } catch (err) {
             setMessage({
@@ -114,23 +119,64 @@ export default function RegisterPage() {
                         required
                     />
 
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Пароль (минимум 8 символов)"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        required
-                    />
+                    <div className="password-wrapper">
+                        <input
+                            type={showPassword.password ? 'text' : 'password'}
+                            name="password"
+                            placeholder="Пароль (минимум 8 символов)"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            required
+                        />
 
-                    <input
-                        type="password"
-                        name="confirmPassword"
-                        placeholder="Повторите пароль"
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        required
-                    />
+                        <button
+                            type="button"
+                            className="password-toggle"
+                            onClick={() =>
+                                setShowPassword((prev) => ({
+                                    ...prev,
+                                    password: !prev.password,
+                                }))
+                            }
+                        >
+                            {showPassword.password ? (
+                                <TbEyeClosed size={24} />
+                            ) : (
+                                <TbEye size={24} />
+                            )}
+                        </button>
+                    </div>
+
+                    <div className="password-wrapper">
+                        <input
+                            type={
+                                showPassword.confirmPassword
+                                    ? 'text'
+                                    : 'password'
+                            }
+                            name="confirmPassword"
+                            placeholder="Повторите пароль"
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
+                            required
+                        />
+                        <button
+                            type="button"
+                            className="password-toggle"
+                            onClick={() =>
+                                setShowPassword((prev) => ({
+                                    ...prev,
+                                    confirmPassword: !prev.confirmPassword,
+                                }))
+                            }
+                        >
+                            {showPassword.confirmPassword ? (
+                                <TbEyeClosed size={24} />
+                            ) : (
+                                <TbEye size={24} />
+                            )}
+                        </button>
+                    </div>
 
                     <button type="submit" disabled={loading}>
                         {loading ? 'Регистрация...' : 'Создать аккаунт'}
@@ -139,7 +185,7 @@ export default function RegisterPage() {
                     <button
                         type="button"
                         className="move-button"
-                        onClick={() => handleSwitch('/login', true)} // Кастомный переход с анимацией
+                        onClick={() => handleSwitch('/login', true)}
                     >
                         Уже есть аккаунт? Войти
                     </button>
