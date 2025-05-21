@@ -359,6 +359,10 @@ $border-radius: 24px;
         font-family: 'Montserrat', serif;
         font-weight: 600;
         font-size: 16px;
+
+        .end-time {
+            opacity: 0.5;
+        }
     }
 
     .quality-selector {

@@ -455,7 +455,11 @@ const VideoPlayer = ({ videoSources, posterUrl }) => {
                         </div>
 
                         <span className="time-display">
-                            {formatTime(currentTime)} / {formatTime(duration)}
+                            {formatTime(currentTime)}{' '}
+                            <span className="end-time">
+                                {' '}
+                                / {formatTime(duration)}
+                            </span>
                         </span>
                     </div>
 

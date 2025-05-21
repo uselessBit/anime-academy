@@ -301,6 +301,9 @@
   font-weight: 600;
   font-size: 16px;
 }
+.video-player-container .time-display .end-time {
+  opacity: 0.5;
+}
 .video-player-container .quality-selector {
   position: relative;
 }
