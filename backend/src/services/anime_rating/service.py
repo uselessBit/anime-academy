@@ -43,3 +43,19 @@ class AnimeRatingService(BaseService, AnimeRatingServiceI):
             )
             await session.execute(update(Anime).where(Anime.id == anime_id).values(rating=avg_rating or 0.0))
             await session.commit()
+
+    async def get_rating_stats(self, anime_id: int) -> dict[str, int]:
+        async with self.session() as session:
+            result = await session.execute(
+                select(
+                    AnimeRating.rating,
+                    func.count(AnimeRating.rating).label("count")
+                )
+                .where(AnimeRating.anime_id == anime_id)
+                .group_by(AnimeRating.rating)
+            )
+            rows = result.all()
+            rating_counts = {row.rating: row.count for row in rows}
+
+            full_stats = {f"star_{i}": rating_counts.get(i, 0) for i in range(1, 11)}
+            return full_stats

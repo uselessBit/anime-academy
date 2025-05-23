@@ -16,3 +16,6 @@ class AnimeRatingServiceI(Protocol):
 
     @abstractmethod
     async def _update_anime_rating(self, anime_id: int) -> None: ...
+
+    @abstractmethod
+    async def get_rating_stats(self, anime_id: int) -> dict[str, int]: ...

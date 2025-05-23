@@ -63,3 +63,12 @@ async def delete(
 ) -> JSONResponse:
     await anime_rating_service.delete(rating_id)
     return JSONResponse(content={"message": "Anime rating deleted successfully"}, status_code=HTTPStatus.OK)
+
+
+@anime_rating_router.get("/anime_rating/{anime_id}/rating_stats")
+async def get_rating_stats(
+    anime_id: int,
+    anime_rating_service: AnimeRatingServiceI = Depends(get_anime_rating_service),
+) -> JSONResponse:
+    stats = await anime_rating_service.get_rating_stats(anime_id)
+    return JSONResponse(content=stats, status_code=HTTPStatus.OK)
