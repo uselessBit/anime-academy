@@ -1,84 +1,55 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import '../../styles/homePage/SortMenu.css'
 
+const SORT_OPTIONS = [
+    { key: 'title', label: 'По названию' },
+    { key: 'rating', label: 'По рейтингу' },
+    { key: 'release_year', label: 'По году' },
+]
+
 export default function SortMenu({
-    activeButton,
-    resetSort,
-    handleClick,
-    toggleSortMenu,
-    sortButtonText,
-    sortMenuVisible,
-    closeSortMenu,
+    activeSort,
+    sortOrder,
+    onSortChange,
+    onReset,
+    onToggle,
+    isMenuVisible,
 }) {
-    useEffect(() => {
-        const handleKeydown = (e) => {
-            if (e.key === 'Escape') closeSortMenu()
-        }
-
-        window.addEventListener('keydown', handleKeydown)
-    }, [])
-
     return (
         <div className="sort-container">
             <button
                 className="standard-input button image-button sort-button"
-                onClick={toggleSortMenu}
+                onClick={onToggle}
             >
                 <img
                     src="/icons/sort.svg"
-                    alt="?"
-                    className={`button-icon ${activeButton ? 'reflect' : ''}`}
+                    alt="Сортировка"
+                    className={`button-icon sort-icon ${activeSort ? (sortOrder === 'desc' ? '' : 'reflect') : ''}`}
                 />
-                {sortButtonText}
+                {activeSort
+                    ? SORT_OPTIONS.find((o) => o.key === activeSort).label
+                    : 'Сортировать'}
             </button>
 
-            <div className={`sort-menu ${sortMenuVisible ? 'active' : ''}`}>
-                <button
-                    className="standard-input image-button sort-item"
-                    onClick={() => {
-                        handleClick(
-                            'name',
-                            sortButtonText === 'По алфавиту'
-                                ? !activeButton
-                                : activeButton
-                        )
-                    }}
-                >
-                    По алфавиту
-                </button>
-                <button
-                    className="standard-input image-button sort-item"
-                    onClick={() => {
-                        handleClick(
-                            'rating',
-                            sortButtonText === 'По рейтингу'
-                                ? !activeButton
-                                : activeButton
-                        )
-                    }}
-                >
-                    По рейтингу
-                </button>
-                <button
-                    className="standard-input image-button sort-item"
-                    onClick={() => {
-                        handleClick(
-                            'year',
-                            sortButtonText === 'По году'
-                                ? !activeButton
-                                : activeButton
-                        )
-                    }}
-                >
-                    По году
-                </button>
-                <button
-                    className="standard-input button sort-item"
-                    onClick={resetSort}
-                >
-                    Сбросить
-                </button>
-            </div>
+            {isMenuVisible && (
+                <div className="sort-menu active">
+                    {SORT_OPTIONS.map((option) => (
+                        <button
+                            key={option.key}
+                            className={`standard-input image-button sort-item ${activeSort === option.key ? 'active' : ''}`}
+                            onClick={() => onSortChange(option.key)}
+                        >
+                            {option.label}
+                        </button>
+                    ))}
+                    <button
+                        className="standard-input button sort-item"
+                        onClick={onReset}
+                    >
+                        Сбросить
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

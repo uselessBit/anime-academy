@@ -8,8 +8,8 @@ export const useAnime = (animeId) => {
     const [genres, setGenres] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [currentFilters, setCurrentFilters] = useState({})
 
-    // Загружаем жанры при инициализации
     useEffect(() => {
         const loadGenres = async () => {
             try {
@@ -22,7 +22,6 @@ export const useAnime = (animeId) => {
         loadGenres()
     }, [])
 
-    // Функция для замены ID жанров на названия
     const mapGenres = (item) => ({
         ...item,
         genres: item.genre_ids.map(
@@ -30,19 +29,17 @@ export const useAnime = (animeId) => {
         ),
     })
 
-    // Загрузка списка аниме
     const loadAnimes = async () => {
         try {
-            const data = await AnimeService.fetchAllAnimes()
-            setAnimes(genres.length ? data.map(mapGenres) : data)
-            setLoading(false)
+            const data = await AnimeService.fetchAllAnimes(currentFilters)
+            // Применяем mapGenres к каждому элементу массива
+            const mappedData = data.map((item) => mapGenres(item))
+            setAnimes(mappedData)
         } catch (err) {
-            setError(`Ошибка загрузки: ${err.message || err}`)
-            setLoading(false)
+            setError(`Ошибка загрузки: ${err.message}`)
         }
     }
 
-    // Загрузка конкретного аниме
     const loadAnime = async (id) => {
         try {
             const data = await AnimeService.fetchAnimeById(id)
@@ -53,6 +50,12 @@ export const useAnime = (animeId) => {
             setLoading(false)
         }
     }
+
+    useEffect(() => {
+        if (!animeId) {
+            loadAnimes()
+        }
+    }, [currentFilters])
 
     useEffect(() => {
         if (!genres.length) return
@@ -69,13 +72,8 @@ export const useAnime = (animeId) => {
         anime: animeId ? anime : null,
         loading: loading || !genres.length,
         error,
-        refresh: () => {
-            setLoading(true)
-            if (typeof animeId === 'undefined') {
-                loadAnimes()
-            } else {
-                loadAnime(animeId)
-            }
+        updateFilters: (newFilters) => {
+            setCurrentFilters((prev) => ({ ...prev, ...newFilters }))
         },
     }
 }

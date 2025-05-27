@@ -1,3 +1,4 @@
+// AnimeList.jsx
 import React, { useState, useEffect } from 'react'
 import '../../styles/homePage/AnimeList.css'
 import AnimeCard from '../AnimeCard.jsx'
@@ -7,60 +8,65 @@ import { useAnime } from '../../hooks/useAnime.jsx'
 
 export default function AnimeList() {
     const [sortMenuVisible, setSortMenuVisible] = useState(false)
-    const { animes, loading, error } = useAnime()
-    const [originalAnimeList] = useState([])
-    const [imagesLoad, setImagesLoad] = useState(false)
-    const [sortButtonText, setSortButtonText] = useState('Сортировать')
-    const [key, setKey] = useState(0)
-    const [activeButton, setActiveButton] = useState(null)
     const [filtersVisible, setFiltersVisible] = useState(false)
-    const [currentFilters, setCurrentFilters] = useState({
-        selectedGenres: [],
-        yearRange: [],
-        rating: '',
-    })
+    const [activeSort, setActiveSort] = useState(null)
+    const [sortOrder, setSortOrder] = useState('desc')
+    const [currentFilters, setCurrentFilters] = useState({})
+    const [imagesLoad, setImagesLoad] = useState(false)
 
-    const handleFiltersApply = (filters) => {
-        setCurrentFilters(filters)
-        setKey((prevKey) => prevKey + 1)
+    const { animes, loading, error, updateFilters } = useAnime()
+
+    const handleSort = (sortType) => {
+        if (activeSort === sortType) {
+            const newOrder = sortOrder === 'asc' ? 'desc' : 'asc'
+            setSortOrder(newOrder)
+            updateFilters({
+                ...currentFilters,
+                sort_by: sortType,
+                order: newOrder,
+            })
+        } else {
+            setActiveSort(sortType)
+            setSortOrder('desc')
+            updateFilters({
+                ...currentFilters,
+                sort_by: sortType,
+                order: 'desc',
+            })
+        }
     }
-
-    const handleClick = (_sortType, id) => {
-        setActiveButton(id)
-    }
-
-    const toggleSortMenu = () => setSortMenuVisible(!sortMenuVisible)
 
     const resetSort = () => {
-        setSortButtonText('Сортировать')
-        setKey((prevKey) => prevKey + 1)
-        setSortMenuVisible(false)
-        setActiveButton(null)
+        setActiveSort(null)
+        setSortOrder('desc')
+        updateFilters({
+            ...currentFilters,
+            sort_by: undefined,
+            order: undefined,
+        })
     }
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (
-                !event.target.closest('.sort-menu') &&
-                !event.target.closest('.sort-button')
-            ) {
-                setSortMenuVisible(false)
-            }
-        }
-        document.addEventListener('click', handleClickOutside)
-        return () => document.removeEventListener('click', handleClickOutside)
+        const timer = setTimeout(() => setImagesLoad(true), 200)
+        return () => clearTimeout(timer)
     }, [])
-
-    setTimeout(() => {
-        setImagesLoad(true)
-    }, 200)
 
     return (
         <>
             <Filters
                 check={filtersVisible}
                 onClose={() => setFiltersVisible(false)}
-                applyFilters={handleFiltersApply}
+                applyFilters={(filters) => {
+                    const apiFilters = {
+                        ...currentFilters,
+                        genre_ids: filters.selectedGenres,
+                        min_year: filters.yearRange?.[0],
+                        max_year: filters.yearRange?.[1],
+                        min_rating: filters.rating,
+                    }
+                    setCurrentFilters(apiFilters)
+                    updateFilters(apiFilters)
+                }}
                 initialFilters={currentFilters}
             />
 
@@ -72,13 +78,14 @@ export default function AnimeList() {
 
                     <div className="buttons-container">
                         <SortMenu
-                            activeButton={activeButton}
-                            resetSort={resetSort}
-                            handleClick={handleClick}
-                            toggleSortMenu={toggleSortMenu}
-                            sortButtonText={sortButtonText}
-                            sortMenuVisible={sortMenuVisible}
-                            closeSortMenu={() => setSortMenuVisible(false)}
+                            activeSort={activeSort}
+                            sortOrder={sortOrder}
+                            onSortChange={handleSort}
+                            onReset={resetSort}
+                            onToggle={() =>
+                                setSortMenuVisible(!sortMenuVisible)
+                            }
+                            isMenuVisible={sortMenuVisible}
                         />
                         <button
                             className="standard-input button image-button"
@@ -93,15 +100,11 @@ export default function AnimeList() {
                         </button>
                     </div>
                 </div>
+
                 <div className="anime-cards">
-                    {animes.length > 0
-                        ? animes.map((anime) => (
-                              <AnimeCard
-                                  key={`${anime.id}-${key}`}
-                                  anime={anime}
-                              />
-                          ))
-                        : 'Ничего не найдено'}
+                    {animes.map((anime) => (
+                        <AnimeCard key={anime.id} anime={anime} />
+                    ))}
                 </div>
             </div>
         </>

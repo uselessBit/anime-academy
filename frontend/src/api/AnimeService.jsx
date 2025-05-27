@@ -1,18 +1,27 @@
 import axios from 'axios'
 import API_BASE_URL from '../config'
 
-let cachedAnimes = null
-
 export const AnimeService = {
-    fetchAllAnimes: async () => {
-        if (cachedAnimes) return cachedAnimes
-
+    fetchAllAnimes: async (params = {}) => {
         try {
             const response = await axios.get(
-                `${API_BASE_URL}api/v1/crud/anime/`
+                `${API_BASE_URL}api/v1/crud/anime/`,
+                {
+                    params: {
+                        offset: params.offset,
+                        limit: params.limit,
+                        sort_by: params.sort_by,
+                        order: params.order,
+                        genre_ids: params.genre_ids?.join(','),
+                        min_year: params.min_year,
+                        max_year: params.max_year,
+                        min_rating: params.min_rating,
+                        max_rating: params.max_rating,
+                        title: params.title,
+                    },
+                }
             )
-            cachedAnimes = response.data
-            return cachedAnimes
+            return response.data
         } catch (error) {
             console.error('Error fetching animes:', error)
             throw error

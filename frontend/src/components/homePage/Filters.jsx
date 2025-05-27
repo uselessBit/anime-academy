@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../styles/homePage/Filters.css'
+import { GenreService } from '../../api/GenreService'
 
 export default function Filters({
     onClose,
@@ -7,52 +8,35 @@ export default function Filters({
     check,
     initialFilters,
 }) {
-    const [genres] = useState(['Жанр 1', 'Жанр 2', 'Жанр 3']) // Статические данные
+    const [genres, setGenres] = useState([])
     const [selectedGenres, setSelectedGenres] = useState(
         initialFilters.selectedGenres || []
     )
-    const [yearRange, setYearRange] = useState(initialFilters.yearRange)
-    const [rating, setRating] = useState(initialFilters.rating)
-
-    const handleKeyDown = (e) => {
-        const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete']
-        if (!/[0-9]/.test(e.key) && !allowedKeys.includes(e.key)) {
-            e.preventDefault()
-        }
-    }
+    const [yearRange, setYearRange] = useState(initialFilters.yearRange || [])
+    const [rating, setRating] = useState(initialFilters.rating || '')
 
     useEffect(() => {
-        if (check) document.body.style.overflow = 'hidden'
-        else document.body.style.overflow = 'auto'
-
-        const handleKeydown = (e) => {
-            if (e.key === 'Escape') onClose()
-        }
-
-        window.addEventListener('keydown', handleKeydown)
-
-        return () => {
-            document.body.style.overflow = 'auto'
-        }
-    }, [check])
-
-    const handleGenreChange = (genre) => {
-        if (selectedGenres.includes(genre)) {
-            setSelectedGenres(selectedGenres.filter((g) => g !== genre))
-        } else {
-            setSelectedGenres([...selectedGenres, genre])
-        }
-    }
+        GenreService.fetchAllGenres()
+            .then((data) => setGenres(data))
+            .catch(console.error)
+    }, [])
 
     const handleApplyFilters = () => {
-        applyFilters({ selectedGenres, yearRange, rating })
-        onClose()
-    }
+        const processedRating = rating === '' ? undefined : Number(rating)
 
-    const handleResetFilters = () => {
-        setSelectedGenres([])
-        setYearRange([])
-        setRating('')
+        const processedYearRange = yearRange
+            .map(Number)
+            .filter((year) => !isNaN(year))
+
+        applyFilters({
+            selectedGenres: selectedGenres.length ? selectedGenres : undefined,
+            yearRange: processedYearRange.length
+                ? processedYearRange
+                : undefined,
+            rating: processedRating,
+        })
+
+        onClose()
     }
 
     return (
@@ -79,17 +63,34 @@ export default function Filters({
                         <h3 className="filter-title">Жанры</h3>
                         <div className="filter-genres">
                             {genres.map((genre) => (
-                                <label key={genre}>
+                                <label key={genre.id}>
                                     <input
                                         type="checkbox"
-                                        value={genre}
-                                        checked={selectedGenres.includes(genre)}
-                                        onChange={() =>
-                                            handleGenreChange(genre)
-                                        }
+                                        value={genre.id}
+                                        checked={selectedGenres.includes(
+                                            genre.id
+                                        )}
+                                        onChange={() => {
+                                            if (
+                                                selectedGenres.includes(
+                                                    genre.id
+                                                )
+                                            ) {
+                                                setSelectedGenres(
+                                                    selectedGenres.filter(
+                                                        (id) => id !== genre.id
+                                                    )
+                                                )
+                                            } else {
+                                                setSelectedGenres([
+                                                    ...selectedGenres,
+                                                    genre.id,
+                                                ])
+                                            }
+                                        }}
                                     />
                                     <span className="filters-checkbox">
-                                        {genre}
+                                        {genre.name}
                                     </span>
                                 </label>
                             ))}
@@ -104,12 +105,8 @@ export default function Filters({
                                 type="number"
                                 placeholder="от"
                                 value={yearRange[0] || ''}
-                                onKeyDown={handleKeyDown}
                                 onChange={(e) =>
-                                    setYearRange([
-                                        +e.target.value,
-                                        yearRange[1],
-                                    ])
+                                    setYearRange([e.target.value, yearRange[1]])
                                 }
                             />
                             <input
@@ -117,12 +114,8 @@ export default function Filters({
                                 type="number"
                                 placeholder="до"
                                 value={yearRange[1] || ''}
-                                onKeyDown={handleKeyDown}
                                 onChange={(e) =>
-                                    setYearRange([
-                                        yearRange[0],
-                                        +e.target.value,
-                                    ])
+                                    setYearRange([yearRange[0], e.target.value])
                                 }
                             />
                         </div>
@@ -134,8 +127,6 @@ export default function Filters({
                             className="standard-input filter-input"
                             type="number"
                             value={rating}
-                            placeholder="0"
-                            onKeyDown={handleKeyDown}
                             onChange={(e) => setRating(e.target.value)}
                         />
                     </div>
@@ -143,7 +134,11 @@ export default function Filters({
                     <div className="buttons-container filters-actions">
                         <button
                             className="standard-input button"
-                            onClick={handleResetFilters}
+                            onClick={() => {
+                                setSelectedGenres([])
+                                setYearRange([])
+                                setRating('')
+                            }}
                         >
                             Сбросить
                         </button>
