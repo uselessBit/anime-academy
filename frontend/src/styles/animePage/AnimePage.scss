@@ -1,5 +1,5 @@
 .anime-container {
-    margin: 32px auto;
+    margin: 48px auto;
     background-color: rgba(238, 238, 238, 0.15);
     border-radius: 64px;
 
@@ -17,15 +17,34 @@
             right: 62px;
         }
 
+        .left-container {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+
+            .play-button {
+                font-size: 20px;
+                height: 64px;
+                border-radius: 32px;
+
+                img {
+                    height: 16px;
+                }
+
+                &:hover {
+                    background-color: #fff;
+                }
+            }
+        }
+
         .top-container {
             display: flex;
-            gap: 32px;
-            max-height: 400px;
+            gap: 48px;
 
             .anime-poster {
-                width: 280px;
-                min-width: 280px;
-                height: 400px;
+                width: 380px;
+                min-width: 380px;
+                height: 540px;
                 position: relative;
 
                 .blurred,
@@ -60,8 +79,9 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                max-width: calc(100% - 310px);
-                height: 400px;
+                width: calc(100% - 310px);
+                gap: 16px;
+                height: fit-content;
 
                 strong {
                     font-weight: 800;
@@ -74,8 +94,8 @@
                 }
 
                 h1 {
-                    font-size: 96px;
-                    font-weight: 900;
+                    font-size: 38px;
+                    font-weight: 800;
                     margin: 0;
                     white-space: nowrap;
                     overflow: hidden;
@@ -84,12 +104,8 @@
 
                 p {
                     margin: 0;
-                    font-size: 24px;
+                    font-size: 20px;
                     font-weight: 500;
-                    overflow: hidden;
-                    display: -webkit-box;
-                    -webkit-box-orient: vertical;
-                    -webkit-line-clamp: 3;
                 }
 
                 .anime-logo {
@@ -100,6 +116,39 @@
 
                 .favorite-button {
                     width: 180px;
+                }
+
+                .anime-info-table {
+                    border-collapse: collapse;
+                    font-size: 20px;
+                }
+
+                .anime-info-table td {
+                    padding: 0.4rem;
+                }
+
+                .property-column {
+                    font-weight: 500;
+                    width: 170px;
+                    opacity: 0.5;
+                }
+
+                .value-column {
+                    font-weight: 500;
+                }
+
+                .anime-genres {
+                    display: flex;
+                    gap: 8px;
+                    flex-wrap: wrap;
+
+                    .item {
+                        background-color: rgba(238, 238, 238, 0.1);
+                        padding: 12px 24px;
+                        font-size: 20px;
+                        border-radius: 16px;
+                        font-weight: 500;
+                    }
                 }
             }
         }
@@ -155,7 +204,8 @@
                 }
             }
 
-            p, h3 {
+            p,
+            h3 {
                 margin: 0;
             }
 

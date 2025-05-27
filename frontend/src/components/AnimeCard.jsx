@@ -46,7 +46,7 @@ export default function AnimeCard({ anime }) {
                 />
 
                 <div className="anime-content-container">
-                    <AnimeRating rating={anime.average_rating} />
+                    <AnimeRating rating={anime.rating} />
 
                     <div className="anime-text">
                         <p>

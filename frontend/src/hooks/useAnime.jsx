@@ -15,6 +15,7 @@ export const useAnime = (animeId) => {
             try {
                 const data = await GenreService.fetchAllGenres()
                 setGenres(data)
+                loadAnimes()
             } catch (err) {
                 console.error('Error loading genres:', err)
             }
@@ -32,7 +33,6 @@ export const useAnime = (animeId) => {
     const loadAnimes = async () => {
         try {
             const data = await AnimeService.fetchAllAnimes(currentFilters)
-            // Применяем mapGenres к каждому элементу массива
             const mappedData = data.map((item) => mapGenres(item))
             setAnimes(mappedData)
         } catch (err) {

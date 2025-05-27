@@ -10,14 +10,14 @@ export default function AnimeRating({ rating }) {
                     ? 'green'
                     : rating >= 5
                       ? 'yellow'
-                      : rating !== 0
+                      : rating !== null
                         ? 'red'
                         : 'undefined'
             }`}
         >
             <img src="/icons/star.svg" alt="star" className="anime-star" />
             <span className="anime-rating-text">
-                {rating !== 0 ? rating : '-'}
+                {rating !== null ? rating : '-'}
             </span>
         </div>
     )

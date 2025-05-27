@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useAnime } from '../hooks/useAnime'
 import '../styles/animePage/AnimePage.css'
@@ -8,65 +8,6 @@ import API_BASE_URL from '../config.js'
 export default function AnimePage() {
     const { id } = useParams()
     const { anime, loading, error } = useAnime(Number(id))
-    const [reviews, setReviews] = useState([])
-    const [newReview, setNewReview] = useState({ rating: '', review: '' })
-    const [errorReview, setErrorReview] = useState(null)
-    const [reviewForm, setReviewForm] = useState(false)
-
-    const isFavorite = favorites.some((fav) => fav.id === Number(id))
-
-    const toggleFavorite = () => {
-        if (isFavorite) {
-            removeFromFavorites(Number(id))
-        } else {
-            addToFavorites(Number(id))
-        }
-    }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setNewReview((prev) => ({ ...prev, [name]: value }))
-    }
-
-    const handleSubmitReview = (e) => {
-        e.preventDefault()
-
-        if (!newReview.rating || !newReview.review) {
-            setErrorReview('Пожалуйста, заполните все поля.')
-            return
-        }
-
-        const newReviewEntry = {
-            rating: newReview.rating,
-            review: newReview.review,
-            username: user.username,
-            avatar: user.avatar,
-            created_at: new Date().toISOString(),
-        }
-
-        setReviews((prev) => [...prev, newReviewEntry])
-        setNewReview({ rating: '', review: '' })
-        setErrorReview(null)
-    }
-
-    const toggleReviewForm = () => setReviewForm(!reviewForm)
-    const onCloseReviewForm = () => setReviewForm(false)
-
-    useEffect(() => {
-        if (reviewForm) document.body.style.overflow = 'hidden'
-        else document.body.style.overflow = 'auto'
-
-        const handleKeydown = (e) => {
-            if (e.key === 'Escape') onCloseReviewForm()
-        }
-
-        window.addEventListener('keydown', handleKeydown)
-
-        return () => {
-            document.body.style.overflow = 'auto'
-            window.removeEventListener('keydown', handleKeydown)
-        }
-    }, [reviewForm])
 
     if (loading)
         return (
@@ -77,68 +18,88 @@ export default function AnimePage() {
     if (error) return <div className="container">Ошибка: {error}</div>
     if (!anime) return <div className="container">Аниме не найдено</div>
 
+    const animeInfo = {
+        Тип: 'ТВ Сериал',
+        Эпизоды: '12',
+        Статус: 'Вышел',
+        Сезон: 'Зима 2024',
+        Выпуск: 'с 7 января 2024 по 31 марта 2024',
+        Студия: 'A-1 Pictures Inc.',
+        Длительность: '23 мин. ~ серия',
+    }
+
     return (
         <div className="container anime-container">
             <div className="margin-container">
                 <AnimeRating rating={anime.rating} />
                 <div className="top-container">
-                    <div className="anime-poster">
-                        <img
-                            src={`${API_BASE_URL}media/anime/${anime.image_url}`}
-                            alt={anime.title}
-                            className="blurred"
-                        />
-                        <img
-                            src={`${API_BASE_URL}media/anime/${anime.image_url}`}
-                            alt={anime.title}
-                            className="main"
-                        />
+                    <div className="left-container">
+                        <div className="anime-poster">
+                            <img
+                                src={`${API_BASE_URL}media/anime/${anime.image_url}`}
+                                alt={anime.title}
+                                className="blurred"
+                            />
+                            <img
+                                src={`${API_BASE_URL}media/anime/${anime.image_url}`}
+                                alt={anime.title}
+                                className="main"
+                            />
+                        </div>
+                        <button className="standard-input button image-button active play-button">
+                            <img
+                                src="/icons/play.svg"
+                                alt="?"
+                                className="button-icon"
+                            />
+                            Смотреть
+                        </button>
+                        <button className="standard-input button image-button play-button">
+                            <img
+                                src="/icons/star.svg"
+                                alt="?"
+                                className="button-icon"
+                            />
+                            Оценить
+                        </button>
+                        <button className="standard-input button play-button">
+                            Добавить в список
+                        </button>
                     </div>
                     <div className="anime-info">
                         <div className="title-wrapper">
                             <h1>{anime.title}</h1>
                         </div>
-                        <p>
-                            <strong>Год:</strong> {anime.release_year}
-                        </p>
-                        <p>
-                            <strong>Жанры:</strong> {anime.genres?.join(', ')}
-                        </p>
-                        <p>
-                            <strong>Описание:</strong> {anime.description}
-                        </p>
-
-                        {user && (
-                            <div className="buttons-container">
-                                <button
-                                    className={`standard-input image-button favorite-button ${isFavorite ? 'remove active' : 'add'}`}
-                                    onClick={toggleFavorite}
-                                >
-                                    <img
-                                        src={
-                                            isFavorite
-                                                ? '/icons/remove-from-favorite.svg'
-                                                : '/icons/add-to-favorite.svg'
-                                        }
-                                        alt=""
-                                        className="button-icon"
-                                    />
-                                    {isFavorite ? 'Удалить' : 'Добавить'}
-                                </button>
-
-                                <button
-                                    className="standard-input image-button button"
-                                    onClick={toggleReviewForm}
-                                >
-                                    <img
-                                        src="/icons/star.svg"
-                                        alt=""
-                                        className="button-icon"
-                                    />
-                                    Оставить отзыв
-                                </button>
-                            </div>
-                        )}
+                        <table className="anime-info-table">
+                            <tbody>
+                                {Object.entries(animeInfo).map(
+                                    ([key, value]) => (
+                                        <tr key={key}>
+                                            <td className="property-column">
+                                                {key}
+                                            </td>
+                                            <td className="value-column">
+                                                {value}
+                                            </td>
+                                        </tr>
+                                    )
+                                )}
+                            </tbody>
+                        </table>
+                        <h1>
+                            <strong>Жанры</strong>
+                        </h1>
+                        <div className="anime-genres">
+                            {anime.genres?.map((item, i) => (
+                                <div className="item" key={i}>
+                                    {item}
+                                </div>
+                            ))}
+                        </div>
+                        <h1>
+                            <strong>Описание</strong>
+                        </h1>
+                        <p>{anime.description}</p>
                     </div>
                 </div>
             </div>

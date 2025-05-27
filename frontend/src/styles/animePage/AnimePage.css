@@ -1,5 +1,5 @@
 .anime-container {
-  margin: 32px auto;
+  margin: 48px auto;
   background-color: rgba(238, 238, 238, 0.15);
   border-radius: 64px;
 }
@@ -16,15 +16,30 @@
   top: 48px;
   right: 62px;
 }
+.anime-container .margin-container .left-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.anime-container .margin-container .left-container .play-button {
+  font-size: 20px;
+  height: 64px;
+  border-radius: 32px;
+}
+.anime-container .margin-container .left-container .play-button img {
+  height: 16px;
+}
+.anime-container .margin-container .left-container .play-button:hover {
+  background-color: #fff;
+}
 .anime-container .margin-container .top-container {
   display: flex;
-  gap: 32px;
-  max-height: 400px;
+  gap: 48px;
 }
 .anime-container .margin-container .top-container .anime-poster {
-  width: 280px;
-  min-width: 280px;
-  height: 400px;
+  width: 380px;
+  min-width: 380px;
+  height: 540px;
   position: relative;
 }
 .anime-container .margin-container .top-container .anime-poster .blurred,
@@ -54,8 +69,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  max-width: calc(100% - 310px);
-  height: 400px;
+  width: calc(100% - 310px);
+  gap: 16px;
+  height: fit-content;
 }
 .anime-container .margin-container .top-container .anime-info strong {
   font-weight: 800;
@@ -66,8 +82,8 @@
   width: calc(100% - 160px);
 }
 .anime-container .margin-container .top-container .anime-info h1 {
-  font-size: 96px;
-  font-weight: 900;
+  font-size: 38px;
+  font-weight: 800;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -75,12 +91,8 @@
 }
 .anime-container .margin-container .top-container .anime-info p {
   margin: 0;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 500;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
 }
 .anime-container .margin-container .top-container .anime-info .anime-logo {
   max-height: 180px;
@@ -89,6 +101,33 @@
 }
 .anime-container .margin-container .top-container .anime-info .favorite-button {
   width: 180px;
+}
+.anime-container .margin-container .top-container .anime-info .anime-info-table {
+  border-collapse: collapse;
+  font-size: 20px;
+}
+.anime-container .margin-container .top-container .anime-info .anime-info-table td {
+  padding: 0.4rem;
+}
+.anime-container .margin-container .top-container .anime-info .property-column {
+  font-weight: 500;
+  width: 170px;
+  opacity: 0.5;
+}
+.anime-container .margin-container .top-container .anime-info .value-column {
+  font-weight: 500;
+}
+.anime-container .margin-container .top-container .anime-info .anime-genres {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.anime-container .margin-container .top-container .anime-info .anime-genres .item {
+  background-color: rgba(238, 238, 238, 0.1);
+  padding: 12px 24px;
+  font-size: 20px;
+  border-radius: 16px;
+  font-weight: 500;
 }
 .anime-container .margin-container h2 {
   margin: 0;
@@ -134,7 +173,8 @@
   top: 16px;
   right: 16px;
 }
-.anime-container .margin-container .reviews-container p, .anime-container .margin-container .reviews-container h3 {
+.anime-container .margin-container .reviews-container p,
+.anime-container .margin-container .reviews-container h3 {
   margin: 0;
 }
 .anime-container .margin-container .reviews-container p {
