@@ -138,15 +138,14 @@ class AnimeService(BaseService, AnimeServiceI):
             query = (
                 select(Anime)
                 .options(selectinload(Anime.genres))
-                .where(Anime.title.ilike(f"%{title}%"))  # Регистронезависимый поиск
-                .order_by(func.length(Anime.title).asc())  # Сортировка по релевантности (PostgreSQL)
+                .where(Anime.title.ilike(f"%{title}%"))
+                .order_by(func.length(Anime.title).asc())
                 .limit(10)
             )
 
             result = await session.execute(query)
             animes = result.scalars().all()
 
-            # Преобразуем в схемы
             return [
                 AnimeResponseSchema(
                     id=anime.id,
