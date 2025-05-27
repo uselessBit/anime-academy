@@ -45,6 +45,11 @@ async def get_multi(offset: int | None = None,
     return await anime_service.get_multi(offset, limit, sort_by, order, genre_ids, min_year, max_year, min_rating, max_rating)
 
 
+@anime_router.get("/search_by_title", response_model=list[AnimeResponseSchema])
+async def get_by_title(title: str, anime_service: AnimeServiceI = Depends(get_anime_service)) -> list[AnimeResponseSchema]:
+    return await anime_service.get_by_title(title)
+
+
 @anime_router.get("/{anime_id}", response_model=AnimeResponseSchema)
 async def get(anime_id: int, anime_service: AnimeServiceI = Depends(get_anime_service)) -> AnimeResponseSchema:
     return await anime_service.get(anime_id)

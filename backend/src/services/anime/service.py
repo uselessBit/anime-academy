@@ -3,7 +3,7 @@ from collections.abc import Callable
 from fastcrud import FastCRUD
 from pydantic import TypeAdapter
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import delete, select, exists
+from sqlalchemy import delete, select, exists, func
 from sqlalchemy.orm import selectinload
 
 from src.clients.database.models.anime import AnimeGenre, Anime
@@ -18,7 +18,6 @@ from src.services.utils import delete_image, save_image, try_commit
 
 
 class AnimeService(BaseService, AnimeServiceI):
-
     def __init__(
         self, session: Callable[..., AsyncSession], anime_genre_service: AnimeGenreServiceI
     ) -> None:
@@ -133,6 +132,32 @@ class AnimeService(BaseService, AnimeServiceI):
             }
 
             return AnimeResponseSchema(**anime_data)
+
+    async def get_by_title(self, title: str) -> list[AnimeResponseSchema]:
+        async with self.session() as session:
+            query = (
+                select(Anime)
+                .options(selectinload(Anime.genres))
+                .where(Anime.title.ilike(f"%{title}%"))  # Регистронезависимый поиск
+                .order_by(func.length(Anime.title).asc())  # Сортировка по релевантности (PostgreSQL)
+                .limit(10)
+            )
+
+            result = await session.execute(query)
+            animes = result.scalars().all()
+
+            # Преобразуем в схемы
+            return [
+                AnimeResponseSchema(
+                    id=anime.id,
+                    title=anime.title,
+                    description=anime.description,
+                    release_year=anime.release_year,
+                    image_url=anime.image_url,
+                    rating=anime.rating,
+                    genre_ids=[genre.id for genre in anime.genres] if anime.genres else []
+                ) for anime in animes
+            ]
 
     async def update(self, anime_id: int, anime_data: UpdateAnimeSchema, image: Image) -> None:
         updates = anime_data.model_dump(exclude_unset=True)

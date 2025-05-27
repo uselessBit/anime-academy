@@ -26,6 +26,9 @@ class AnimeServiceI(Protocol):
     async def get(self, anime_id: int) -> AnimeResponseSchema: ...
 
     @abstractmethod
+    async def get_by_title(self, title: str) -> list[AnimeResponseSchema]: ...
+
+    @abstractmethod
     async def update(self, anime_id: int, anime_data: UpdateAnimeSchema, image: Image) -> None: ...
 
     @abstractmethod
