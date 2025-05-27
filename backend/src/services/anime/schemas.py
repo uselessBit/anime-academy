@@ -11,6 +11,16 @@ class CreateAnimeSchema(BaseModel):
     image_url: str | None = None
     rating: float | None = None
     genre_ids: list[int] | None = None
+    type: str | None = None
+    episodes: str | None = None
+    status: str | None = None
+    source: str | None = None
+    season: str | None = None
+    release_year: int | None = None
+    studio: str | None = None
+    mpaa_rating: str | None = None
+    age_restrictions: str | None = None
+    poster_url: str | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -26,6 +36,16 @@ class AnimeResponseSchema(BaseModel):
     image_url: str | None = None
     rating: float | None = None
     genre_ids: list[int] | None = None
+    type: str | None = None
+    episodes: str | None = None
+    status: str | None = None
+    source: str | None = None
+    season: str | None = None
+    release_year: int | None = None
+    studio: str | None = None
+    mpaa_rating: str | None = None
+    age_restrictions: str | None = None
+    poster_url: str | None = None
 
     class Config:
         from_attributes = True
@@ -38,6 +58,16 @@ class UpdateAnimeSchema(BaseModel):
     image_url: str | None = None
     rating: float | None = None
     genre_ids: list[int] | None = None
+    type: str | None = None
+    episodes: str | None = None
+    status: str | None = None
+    source: str | None = None
+    season: str | None = None
+    release_year: int | None = None
+    studio: str | None = None
+    mpaa_rating: str | None = None
+    age_restrictions: str | None = None
+    poster_url: str | None = None
 
     @model_validator(mode="before")
     @classmethod

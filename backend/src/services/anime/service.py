@@ -42,11 +42,8 @@ class AnimeService(BaseService, AnimeServiceI):
                 anime_data.image_url = image_url
 
             new_anime = Anime(
-                title=anime_data.title,
-                description=anime_data.description,
                 image_url=image_url,
-                release_year=anime_data.release_year,
-                rating=anime_data.rating,
+                **anime_data.model_dump(exclude={'genre_ids', 'image_url'})
             )
             session.add(new_anime)
             await try_commit(session, new_anime.title, delete_image, anime_path)
