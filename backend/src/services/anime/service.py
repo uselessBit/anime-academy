@@ -3,7 +3,7 @@ from collections.abc import Callable
 from fastcrud import FastCRUD
 from pydantic import TypeAdapter
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import delete, select, exists, func
+from sqlalchemy import delete, select, exists, func, inspect
 from sqlalchemy.orm import selectinload
 
 from src.clients.database.models.anime import AnimeGenre, Anime
@@ -113,25 +113,28 @@ class AnimeService(BaseService, AnimeServiceI):
 
             return TypeAdapter(list[AnimeResponseSchema]).validate_python(anime_data_list)
 
+    def model_to_dict(self, instance):
+        return {
+            key: getattr(instance, key)
+            for key in inspect(instance).mapper.column_attrs.keys()
+        }
+
     async def get(self, anime_id: int) -> AnimeResponseSchema:
         async with self.session() as session:
             query = select(Anime).options(selectinload(Anime.genres)).where(Anime.id == anime_id)
-
             result = await session.execute(query)
             anime = result.scalar_one_or_none()
 
-            genre_ids = [genre.id for genre in anime.genres] if anime.genres else []
-            anime_data = {
-                "id": anime.id,
-                "title": anime.title,
-                "description": anime.description,
-                "release_year": anime.release_year,
-                "image_url": anime.image_url,
-                "rating": anime.rating,
-                "genre_ids": genre_ids
-            }
+            if not anime:
+                raise AnimeNotFoundError
 
-            return AnimeResponseSchema(**anime_data)
+            anime_data = self.model_to_dict(anime)
+
+            anime_data["genre_ids"] = [genre.id for genre in anime.genres] if anime.genres else []
+
+            type_adapter = TypeAdapter(AnimeResponseSchema)
+            return type_adapter.validate_python(anime_data)
+
 
     async def get_by_title(self, title: str) -> list[AnimeResponseSchema]:
         async with self.session() as session:
@@ -146,17 +149,17 @@ class AnimeService(BaseService, AnimeServiceI):
             result = await session.execute(query)
             animes = result.scalars().all()
 
-            return [
-                AnimeResponseSchema(
-                    id=anime.id,
-                    title=anime.title,
-                    description=anime.description,
-                    release_year=anime.release_year,
-                    image_url=anime.image_url,
-                    rating=anime.rating,
-                    genre_ids=[genre.id for genre in anime.genres] if anime.genres else []
-                ) for anime in animes
-            ]
+            type_adapter = TypeAdapter(list[AnimeResponseSchema])
+            return type_adapter.validate_python([
+                {
+                    **{
+                        key: getattr(anime, key)
+                        for key in inspect(anime).mapper.column_attrs.keys()
+                    },
+                    "genre_ids": [genre.id for genre in anime.genres] if anime.genres else []
+                }
+                for anime in animes
+            ])
 
     async def update(self, anime_id: int, anime_data: UpdateAnimeSchema, image: Image) -> None:
         updates = anime_data.model_dump(exclude_unset=True)
