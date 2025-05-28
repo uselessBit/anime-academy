@@ -33,7 +33,7 @@ class UserAnimeStatusService(BaseService, UserAnimeStatusServiceI):
                     UserAnimeStatus.user_id == user_id
                 )
             )
-            anime_statuses =  result.scalars().all()
+            anime_statuses = result.scalars().all()
             if anime_statuses:
                 type_adapter = TypeAdapter(list[UserAnimeStatusResponseSchema])
                 return type_adapter.validate_python(anime_statuses)

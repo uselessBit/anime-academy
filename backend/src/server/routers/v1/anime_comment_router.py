@@ -4,7 +4,8 @@ from fastcrud import crud_router
 from src.clients.database.models.anime_comment import AnimeComment
 from src.container import container
 from src.services.anime_comment.interface import AnimeCommentServiceI
-from src.services.anime_comment.schemas import CommentTreeResponse, CreateAnimeCommentSchema, UpdateAnimeCommentSchema
+from src.services.anime_comment.schemas import CommentTreeResponse, CreateAnimeCommentSchema, UpdateAnimeCommentSchema, \
+    AnimeCommentResponseSchema
 
 
 async def get_anime_comment_service() -> AnimeCommentServiceI:
@@ -33,3 +34,11 @@ async def create(
     anime_comment_service: AnimeCommentServiceI = Depends(get_anime_comment_service),
 ) -> CommentTreeResponse:
     return await anime_comment_service.get_comment_tree(comment_id)
+
+
+@anime_comment_router.get("/comment/anime/{anime_id}", response_model=list[AnimeCommentResponseSchema])
+async def get_anime_comments(
+    anime_id: int,
+    anime_comment_service: AnimeCommentServiceI = Depends(get_anime_comment_service),
+) -> list[AnimeCommentResponseSchema]:
+    return await anime_comment_service.get_anime_comments(anime_id)

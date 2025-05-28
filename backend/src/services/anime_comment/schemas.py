@@ -12,6 +12,18 @@ class CreateAnimeCommentSchema(BaseModel):
     created_at: datetime
     level: int = 0
 
+class AnimeCommentResponseSchema(BaseModel):
+    id: int
+    user_id: UUID
+    anime_id: int
+    parent_id: int | None = None
+    comment: str
+    created_at: datetime
+    level: int = 0
+
+    class Config:
+        from_attributes = True
+
 
 class UpdateAnimeCommentSchema(BaseModel):
     user_id: UUID | None = None
