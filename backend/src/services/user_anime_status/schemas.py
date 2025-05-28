@@ -23,3 +23,13 @@ class UpdateUserAnimeStatusSchema(BaseModel):
     anime_id: int | None = None
     user_id: UUID | None = None
     status: AnimeStatus | None
+
+
+class UserAnimeStatusResponseSchema(BaseModel):
+    anime_id: int
+    user_id: UUID
+    status: AnimeStatus | None = None
+
+    class Config:
+        from_attributes = True
+

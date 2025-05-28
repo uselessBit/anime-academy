@@ -18,6 +18,8 @@ from src.services.anime_comment.service import AnimeCommentService
 from src.services.anime_rating.service import AnimeRatingService
 from src.services.anime_series.interface import AnimeSeriesServiceI
 from src.services.anime_series.service import AnimeSeriesService
+from src.services.user_anime_status.interface import UserAnimeStatusServiceI
+from src.services.user_anime_status.service import UserAnimeStatusService
 from src.settings.database import DatabaseSettings
 from src.settings.redis import RedisSettings
 
@@ -69,6 +71,7 @@ class DependencyContainer(containers.DeclarativeContainer):
                                                       anime_genre_service=anime_genre_service)
     anime_comment_service: Factory["AnimeCommentServiceI"] = Factory(AnimeCommentService, session=database_session)
     anime_series_service: Factory["AnimeSeriesServiceI"] = Factory(AnimeSeriesService, session=database_session)
+    user_anime_status_service: Factory["UserAnimeStatusServiceI"] = Factory(UserAnimeStatusService, session=database_session)
 
 
 container = DependencyContainer()
