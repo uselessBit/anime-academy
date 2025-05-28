@@ -30,7 +30,10 @@ export default function AnimeCard({ anime }) {
             onClick={() => handleSwitch(`/anime/${anime.id}`)}
         >
             <img
-                src={`${API_BASE_URL}media/anime/${anime.image_url}`}
+                src={
+                    anime.poster_url ||
+                    `${API_BASE_URL}media/anime/${anime.image_url}`
+                }
                 alt=""
                 className="anime-blurred"
             />
@@ -40,7 +43,10 @@ export default function AnimeCard({ anime }) {
                 className={`anime-card ${inView ? 'visible' : ''}`}
             >
                 <img
-                    src={`${API_BASE_URL}media/anime/${anime.image_url}`}
+                    src={
+                        anime.poster_url ||
+                        `${API_BASE_URL}media/anime/${anime.image_url}`
+                    }
                     alt=""
                     className="anime-poster"
                 />

@@ -25,7 +25,7 @@ export const useAuth = () => {
         setLoading(true)
         try {
             await UserService.login(username, password)
-            await checkAuth() // Принудительно обновляем состояние
+            await checkAuth()
             return true
         } catch (err) {
             setError(err.message)

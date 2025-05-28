@@ -9,6 +9,7 @@
   gap: 32px;
   justify-content: center;
   width: 100%;
+  margin-bottom: 128px;
 }
 .anime-catalog .anime-list-title {
   font-size: 52px;

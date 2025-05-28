@@ -39,4 +39,19 @@ export const AnimeService = {
             throw error
         }
     },
+
+    fetchAnimeSeriesById: async (animeId) => {
+        try {
+            const response = await axios.get(
+                `${API_BASE_URL}api/v1/crud/anime_series/anime/${animeId}`
+            )
+            return response.data
+        } catch (error) {
+            console.error(
+                `Error fetching anime series for anime ${animeId}:`,
+                error
+            )
+            throw error
+        }
+    },
 }

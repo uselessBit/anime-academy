@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAnime } from '../hooks/useAnime'
 import '../styles/animePage/AnimePage.css'
 import AnimeRating from '../components/AnimeRating.jsx'
 import API_BASE_URL from '../config.js'
+import VideoPlayer from '../components/VideoPlayer'
 
 export default function AnimePage() {
     const { id } = useParams()
     const { anime, loading, error } = useAnime(Number(id))
+    const [selectedEpisode, setSelectedEpisode] = useState(0)
 
     if (loading)
         return (
@@ -19,90 +21,166 @@ export default function AnimePage() {
     if (!anime) return <div className="container">Аниме не найдено</div>
 
     const animeInfo = {
-        Тип: 'ТВ Сериал',
-        Эпизоды: '12',
-        Статус: 'Вышел',
-        Сезон: 'Зима 2024',
-        Выпуск: 'с 7 января 2024 по 31 марта 2024',
-        Студия: 'A-1 Pictures Inc.',
-        Длительность: '23 мин. ~ серия',
+        Тип: anime.type,
+        Источник: anime.source,
+        Эпизоды: anime.episodes,
+        Статус: anime.status,
+        Сезон: anime.season,
+        Выпуск: anime.age_restrictions,
+        Студия: anime.studio,
+        'Рейтинг MPAA': anime.mpaa_rating,
+    }
+
+    const handleScrollToPlayer = (e) => {
+        e.preventDefault()
+        const playerElement = document.getElementById('player')
+        if (playerElement) {
+            playerElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            })
+        }
     }
 
     return (
-        <div className="container anime-container">
-            <div className="margin-container">
-                <AnimeRating rating={anime.rating} />
-                <div className="top-container">
-                    <div className="left-container">
-                        <div className="anime-poster">
-                            <img
-                                src={`${API_BASE_URL}media/anime/${anime.image_url}`}
-                                alt={anime.title}
-                                className="blurred"
-                            />
-                            <img
-                                src={`${API_BASE_URL}media/anime/${anime.image_url}`}
-                                alt={anime.title}
-                                className="main"
-                            />
+        <>
+            <div className="container anime-container">
+                <div className="margin-container">
+                    <AnimeRating rating={anime.rating} />
+                    <div className="top-container">
+                        <div className="left-container">
+                            <div className="anime-poster">
+                                <img
+                                    src={
+                                        anime.poster_url ||
+                                        `${API_BASE_URL}media/anime/${anime.image_url}`
+                                    }
+                                    alt={anime.title}
+                                    className="blurred"
+                                />
+                                <img
+                                    src={
+                                        anime.poster_url ||
+                                        `${API_BASE_URL}media/anime/${anime.image_url}`
+                                    }
+                                    alt={anime.title}
+                                    className="main"
+                                />
+                            </div>
+
+                            <a
+                                href="#player"
+                                className="player-link"
+                                onClick={handleScrollToPlayer}
+                            >
+                                <button className="standard-input button image-button active play-button">
+                                    <img
+                                        src="/icons/play.svg"
+                                        alt="?"
+                                        className="button-icon"
+                                    />
+                                    Смотреть
+                                </button>
+                            </a>
+
+                            <button className="standard-input button image-button play-button">
+                                <img
+                                    src="/icons/star.svg"
+                                    alt="?"
+                                    className="button-icon"
+                                />
+                                Оценить
+                            </button>
+
+                            <button className="standard-input button play-button">
+                                Добавить в список
+                            </button>
                         </div>
-                        <button className="standard-input button image-button active play-button">
-                            <img
-                                src="/icons/play.svg"
-                                alt="?"
-                                className="button-icon"
-                            />
-                            Смотреть
-                        </button>
-                        <button className="standard-input button image-button play-button">
-                            <img
-                                src="/icons/star.svg"
-                                alt="?"
-                                className="button-icon"
-                            />
-                            Оценить
-                        </button>
-                        <button className="standard-input button play-button">
-                            Добавить в список
-                        </button>
-                    </div>
-                    <div className="anime-info">
-                        <div className="title-wrapper">
-                            <h1>{anime.title}</h1>
-                        </div>
-                        <table className="anime-info-table">
-                            <tbody>
-                                {Object.entries(animeInfo).map(
-                                    ([key, value]) => (
-                                        <tr key={key}>
-                                            <td className="property-column">
-                                                {key}
-                                            </td>
-                                            <td className="value-column">
-                                                {value}
-                                            </td>
-                                        </tr>
-                                    )
-                                )}
-                            </tbody>
-                        </table>
-                        <h1>
-                            <strong>Жанры</strong>
-                        </h1>
-                        <div className="anime-genres">
-                            {anime.genres?.map((item, i) => (
-                                <div className="item" key={i}>
-                                    {item}
+                        <div className="anime-info">
+                            <div className="item">
+                                <h1>
+                                    <strong>{anime.title}</strong>
+                                </h1>
+                                <table className="anime-info-table">
+                                    <tbody>
+                                        {Object.entries(animeInfo).map(
+                                            ([key, value]) =>
+                                                value && (
+                                                    <tr key={key}>
+                                                        <td className="property-column">
+                                                            {key}
+                                                        </td>
+                                                        <td className="value-column">
+                                                            {value}
+                                                        </td>
+                                                    </tr>
+                                                )
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="item">
+                                <h1>
+                                    <strong>Жанры</strong>
+                                </h1>
+                                <div className="anime-genres">
+                                    {anime.genres?.map((item, i) => (
+                                        <div className="item" key={i}>
+                                            {item}
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                            </div>
+
+                            <div className="item">
+                                <h1>
+                                    <strong>Описание</strong>
+                                </h1>
+                                <p>{anime.description}</p>
+                            </div>
                         </div>
-                        <h1>
-                            <strong>Описание</strong>
-                        </h1>
-                        <p>{anime.description}</p>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div className="container anime-container" id="player">
+                <div className="margin-container">
+                    <VideoPlayer
+                        videoSources={[
+                            {
+                                label: '1080p',
+                                url: anime.series[selectedEpisode].iframe_html,
+                            },
+                            {
+                                label: '720p',
+                                url: anime.series[selectedEpisode].iframe_html,
+                            },
+                            {
+                                label: '480p',
+                                url: anime.series[selectedEpisode].iframe_html,
+                            },
+                            {
+                                label: '360p',
+                                url: anime.series[selectedEpisode].iframe_html,
+                            },
+                        ]}
+                    />
+                    <div className="episodes-numbers">
+                        {anime.series.map((ep) => (
+                            <button
+                                className={`standard-input button ${ep.episode_number - 1 === selectedEpisode ? 'active' : ''}`}
+                                key={ep.episode_number}
+                                onClick={() =>
+                                    setSelectedEpisode(ep.episode_number - 1)
+                                }
+                            >
+                                {ep.episode_number} эпизод
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </>
     )
 }
