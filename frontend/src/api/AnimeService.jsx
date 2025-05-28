@@ -54,4 +54,24 @@ export const AnimeService = {
             throw error
         }
     },
+
+    createRating: async (ratingData) => {
+        try {
+            const response = await axios.post(
+                `${API_BASE_URL}api/v1/crud/anime_rating`,
+                ratingData,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        accept: 'application/json',
+                    },
+                    withCredentials: true,
+                }
+            )
+            return response.data
+        } catch (error) {
+            console.error('Error creating rating:', error)
+            throw error
+        }
+    },
 }

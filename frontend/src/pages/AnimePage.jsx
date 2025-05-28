@@ -1,15 +1,42 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAnime } from '../hooks/useAnime'
+import { useAuth } from '../hooks/useAuth'
+import { RatingModal } from '../components/animePage/RatingModal'
 import '../styles/animePage/AnimePage.css'
 import AnimeRating from '../components/AnimeRating.jsx'
 import API_BASE_URL from '../config.js'
 import VideoPlayer from '../components/VideoPlayer'
+import { AnimeService } from '../api/AnimeService.jsx'
 
 export default function AnimePage() {
     const { id } = useParams()
     const { anime, loading, error } = useAnime(Number(id))
     const [selectedEpisode, setSelectedEpisode] = useState(0)
+    const { user } = useAuth()
+    const [showRatingModal, setShowRatingModal] = useState(false)
+
+    useEffect(() => {
+        if (showRatingModal) document.body.style.overflow = 'hidden'
+        else document.body.style.overflow = 'auto'
+    }, [showRatingModal])
+
+    const handleRateAnime = async (ratingValue) => {
+        console.log('ZXC')
+        try {
+            await AnimeService.createRating({
+                user_id: user.id,
+                anime_id: id,
+                rating: ratingValue,
+                created_at: new Date().toISOString(),
+            })
+            alert('Оценка успешно сохранена!')
+        } catch (error) {
+            alert('Ошибка при сохранении оценки: ' + error.message)
+        } finally {
+            setShowRatingModal(false)
+        }
+    }
 
     if (loading)
         return (
@@ -83,7 +110,10 @@ export default function AnimePage() {
                                 </button>
                             </a>
 
-                            <button className="standard-input button image-button play-button">
+                            <button
+                                className="standard-input button image-button play-button"
+                                onClick={() => setShowRatingModal(true)}
+                            >
                                 <img
                                     src="/icons/star.svg"
                                     alt="?"
@@ -181,6 +211,12 @@ export default function AnimePage() {
                     </div>
                 </div>
             </div>
+
+            <RatingModal
+                show={showRatingModal}
+                onClose={() => setShowRatingModal(false)}
+                onSubmit={handleRateAnime}
+            />
         </>
     )
 }
