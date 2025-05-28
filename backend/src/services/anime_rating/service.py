@@ -1,13 +1,16 @@
 from collections.abc import Callable
+from uuid import UUID
 
 from fastcrud import FastCRUD
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import TypeAdapter
 
 from src.clients.database.models.anime import Anime
 from src.clients.database.models.anime_rating import AnimeRating
 from src.services.anime_rating.interface import AnimeRatingServiceI
-from src.services.anime_rating.schemas import CreateAnimeRatingSchema, UpdateAnimeRatingSchema
+from src.services.anime_rating.schemas import CreateAnimeRatingSchema, UpdateAnimeRatingSchema, \
+    AnimeRatingResponseSchema
 from src.services.base import BaseService
 from src.services.errors import AnimeReviewNotFoundError
 
@@ -59,3 +62,17 @@ class AnimeRatingService(BaseService, AnimeRatingServiceI):
 
             full_stats = {f"star_{i}": rating_counts.get(i, 0) for i in range(1, 11)}
             return full_stats
+
+    async def get_user_rating(self, anime_id: int, user_id: UUID) -> AnimeRatingResponseSchema | None:
+        async with self.session() as session:
+            result = await session.execute(
+                select(AnimeRating).where(
+                    AnimeRating.anime_id == anime_id,
+                    AnimeRating.user_id == user_id
+                )
+            )
+            anime_rating =  result.scalar_one_or_none()
+            if anime_rating:
+                type_adapter = TypeAdapter(AnimeRatingResponseSchema)
+                return type_adapter.validate_python(anime_rating)
+            return None

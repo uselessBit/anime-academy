@@ -1,13 +1,15 @@
 from http import HTTPStatus
+from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastcrud import FastCRUD, crud_router
 from starlette.responses import JSONResponse
 
 from src.clients.database.models.anime_rating import AnimeRating
 from src.container import container
 from src.services.anime_rating.interface import AnimeRatingServiceI
-from src.services.anime_rating.schemas import CreateAnimeRatingSchema, UpdateAnimeRatingSchema
+from src.services.anime_rating.schemas import CreateAnimeRatingSchema, UpdateAnimeRatingSchema, \
+    AnimeRatingResponseSchema
 
 
 async def get_anime_rating_service() -> AnimeRatingServiceI:
@@ -72,3 +74,15 @@ async def get_rating_stats(
 ) -> JSONResponse:
     stats = await anime_rating_service.get_rating_stats(anime_id)
     return JSONResponse(content=stats, status_code=HTTPStatus.OK)
+
+
+@anime_rating_router.get("/anime_rating/{anime_id}/{user_id}", response_model=None)
+async def get_user_rating(
+    anime_id: int,
+    user_id: UUID,
+    anime_rating_service: AnimeRatingServiceI = Depends(get_anime_rating_service),
+) -> AnimeRatingResponseSchema | Response:
+    anime_rating = await anime_rating_service.get_user_rating(anime_id, user_id)
+    if anime_rating:
+        return anime_rating
+    return Response(status_code=HTTPStatus.NO_CONTENT)

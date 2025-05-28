@@ -1,7 +1,8 @@
 from abc import abstractmethod
 from typing import Protocol
+from uuid import UUID
 
-from src.services.anime_rating.schemas import CreateAnimeRatingSchema, UpdateAnimeRatingSchema
+from src.services.anime_rating.schemas import CreateAnimeRatingSchema, UpdateAnimeRatingSchema, AnimeRatingResponseSchema
 
 
 class AnimeRatingServiceI(Protocol):
@@ -19,3 +20,6 @@ class AnimeRatingServiceI(Protocol):
 
     @abstractmethod
     async def get_rating_stats(self, anime_id: int) -> dict[str, int]: ...
+
+    @abstractmethod
+    async def get_user_rating(self, anime_id: int, user_id: UUID) -> AnimeRatingResponseSchema | None: ...
