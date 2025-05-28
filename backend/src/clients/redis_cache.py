@@ -44,6 +44,7 @@ class RedisCache:
     async def delete_keys(self, request):
         if request.method in self.invalidate_methods:
             if "crud" in request.url.path.lower():
-                path_pattern = f"cache:*:{request.url.path}*"
+                path = "/".join(request.url.path.split("/")[:5])
+                path_pattern = f"cache:*:{path}*"
                 async for key in self.client.scan_iter(match=path_pattern):
                     await self.client.delete(key)
