@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useAnime } from '../hooks/useAnime'
 import { useAuth } from '../hooks/useAuth'
 import { RatingModal } from '../components/animePage/RatingModal'
+import { Notification } from '../components/animePage/Notification'
 import '../styles/animePage/AnimePage.css'
 import AnimeRating from '../components/AnimeRating.jsx'
 import API_BASE_URL from '../config.js'
@@ -15,6 +16,7 @@ export default function AnimePage() {
     const [selectedEpisode, setSelectedEpisode] = useState(0)
     const { user } = useAuth()
     const [showRatingModal, setShowRatingModal] = useState(false)
+    const [notification, setNotification] = useState(null)
 
     useEffect(() => {
         if (showRatingModal) document.body.style.overflow = 'hidden'
@@ -22,7 +24,6 @@ export default function AnimePage() {
     }, [showRatingModal])
 
     const handleRateAnime = async (ratingValue) => {
-        console.log('ZXC')
         try {
             await AnimeService.createRating({
                 user_id: user.id,
@@ -30,9 +31,16 @@ export default function AnimePage() {
                 rating: ratingValue,
                 created_at: new Date().toISOString(),
             })
-            alert('Оценка успешно сохранена!')
+            setNotification({
+                type: 'success',
+                message: 'Оценка успешно сохранена!',
+            })
         } catch (error) {
-            alert('Ошибка при сохранении оценки: ' + error.message)
+            setNotification({
+                type: 'error',
+                message:
+                    error.response?.data?.detail || 'Ошибка сохранения оценки',
+            })
         } finally {
             setShowRatingModal(false)
         }
@@ -211,6 +219,14 @@ export default function AnimePage() {
                     </div>
                 </div>
             </div>
+
+            {notification && (
+                <Notification
+                    type={notification.type}
+                    message={notification.message}
+                    onClose={() => setNotification(null)}
+                />
+            )}
 
             <RatingModal
                 show={showRatingModal}

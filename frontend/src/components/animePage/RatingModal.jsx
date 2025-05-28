@@ -6,6 +6,17 @@ export const RatingModal = ({ show, onClose, onSubmit }) => {
     const [rating, setRating] = useState(0)
     const [hoverRating, setHoverRating] = useState(0)
 
+    const handleSubmit = async () => {
+        onSubmit(rating)
+        onClose()
+    }
+
+    const getStarColor = (value) => {
+        const current = hoverRating || rating
+        if (!current) return '#3d3d3d'
+        return `hsl(${120 * (current / 10)}, 80%, 60%)`
+    }
+
     if (!show) return null
 
     return (
@@ -13,7 +24,11 @@ export const RatingModal = ({ show, onClose, onSubmit }) => {
             <div className="rating-modal-content">
                 <div className="rating-modal-header">
                     <h3>Оцените аниме</h3>
-                    <button className="modal-close-btn" onClick={onClose}>
+                    <button
+                        className="modal-close-btn"
+                        onClick={onClose}
+                        aria-label="Закрыть окно"
+                    >
                         &times;
                     </button>
                 </div>
@@ -34,14 +49,10 @@ export const RatingModal = ({ show, onClose, onSubmit }) => {
                                     className="star-icon"
                                     color={
                                         value <= (hoverRating || rating)
-                                            ? (hoverRating || rating) >= 8
-                                                ? '#00d95a'
-                                                : (hoverRating || rating) >= 5
-                                                  ? '#ffdf14'
-                                                  : '#ff1414'
+                                            ? getStarColor(value)
                                             : '#3d3d3d'
                                     }
-                                    size={40}
+                                    size={48}
                                 />
                             </button>
                         )
@@ -62,7 +73,7 @@ export const RatingModal = ({ show, onClose, onSubmit }) => {
                         </button>
                         <button
                             className="standard-input button active confirm"
-                            onClick={() => onSubmit(rating)}
+                            onClick={handleSubmit}
                             disabled={!rating}
                         >
                             Подтвердить
