@@ -42,8 +42,16 @@ export const useAnime = (animeId) => {
 
     const loadAnime = async (id) => {
         try {
-            const data = await AnimeService.fetchAnimeById(id)
-            setAnime(genres.length ? mapGenres(data) : data)
+            const animeData = await AnimeService.fetchAnimeById(id)
+
+            const seriesData = await AnimeService.fetchAnimeSeriesById(id)
+
+            const fullAnimeData = {
+                ...animeData,
+                series: seriesData,
+            }
+
+            setAnime(genres.length ? mapGenres(fullAnimeData) : fullAnimeData)
             setLoading(false)
         } catch (err) {
             setError(`Ошибка загрузки: ${err.message || err}`)

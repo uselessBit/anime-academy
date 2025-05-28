@@ -17,7 +17,7 @@ export default function AnimeRating({ rating }) {
         >
             <img src="/icons/star.svg" alt="star" className="anime-star" />
             <span className="anime-rating-text">
-                {rating !== null ? rating : '-'}
+                {rating !== null ? rating.toFixed(1) : '-'}
             </span>
         </div>
     )

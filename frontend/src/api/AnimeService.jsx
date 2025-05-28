@@ -39,4 +39,39 @@ export const AnimeService = {
             throw error
         }
     },
+
+    fetchAnimeSeriesById: async (animeId) => {
+        try {
+            const response = await axios.get(
+                `${API_BASE_URL}api/v1/crud/anime_series/anime/${animeId}`
+            )
+            return response.data
+        } catch (error) {
+            console.error(
+                `Error fetching anime series for anime ${animeId}:`,
+                error
+            )
+            throw error
+        }
+    },
+
+    createRating: async (ratingData) => {
+        try {
+            const response = await axios.post(
+                `${API_BASE_URL}api/v1/crud/anime_rating`,
+                ratingData,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        accept: 'application/json',
+                    },
+                    withCredentials: true,
+                }
+            )
+            return response.data
+        } catch (error) {
+            console.error('Error creating rating:', error)
+            throw error
+        }
+    },
 }

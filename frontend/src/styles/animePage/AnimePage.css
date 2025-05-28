@@ -1,3 +1,7 @@
+#player {
+  scroll-margin-top: 90px;
+}
+
 .anime-container {
   margin: 48px auto;
   background-color: rgba(238, 238, 238, 0.15);
@@ -9,7 +13,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 .anime-container .margin-container .anime-rating {
   scale: 1.5;
@@ -24,7 +28,8 @@
 .anime-container .margin-container .left-container .play-button {
   font-size: 20px;
   height: 64px;
-  border-radius: 32px;
+  border-radius: 24px;
+  width: 100%;
 }
 .anime-container .margin-container .left-container .play-button img {
   height: 16px;
@@ -32,14 +37,18 @@
 .anime-container .margin-container .left-container .play-button:hover {
   background-color: #fff;
 }
+.anime-container .margin-container .left-container .player-link {
+  text-decoration: none;
+  width: 100%;
+}
 .anime-container .margin-container .top-container {
   display: flex;
   gap: 48px;
 }
 .anime-container .margin-container .top-container .anime-poster {
-  width: 380px;
-  min-width: 380px;
-  height: 540px;
+  width: 340px;
+  min-width: 340px;
+  height: 500px;
   position: relative;
 }
 .anime-container .margin-container .top-container .anime-poster .blurred,
@@ -70,8 +79,13 @@
   flex-direction: column;
   justify-content: space-between;
   width: calc(100% - 310px);
-  gap: 16px;
+  gap: 24px;
   height: fit-content;
+}
+.anime-container .margin-container .top-container .anime-info .item {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .anime-container .margin-container .top-container .anime-info strong {
   font-weight: 800;
@@ -240,6 +254,12 @@
 }
 .anime-container .margin-container .review-form .button {
   width: fit-content;
+}
+.anime-container .margin-container .episodes-numbers {
+  display: flex;
+  gap: 16px;
+  font-size: 24px;
+  padding: 8px;
 }
 
 /*# sourceMappingURL=AnimePage.css.map */

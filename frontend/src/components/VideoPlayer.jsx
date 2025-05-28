@@ -9,7 +9,7 @@ import {
 } from 'react-icons/fa'
 import { FiMaximize, FiMinimize } from 'react-icons/fi'
 
-const VideoPlayer = ({ videoSources, posterUrl }) => {
+const VideoPlayer = ({ videoSources }) => {
     const [isPlaying, setIsPlaying] = useState(false)
     const [volume, setVolume] = useState(1)
     const [isMuted, setIsMuted] = useState(false)
@@ -345,7 +345,6 @@ const VideoPlayer = ({ videoSources, posterUrl }) => {
                 className="video-player-container video-preview-container"
                 ref={playerContainerRef}
                 onClick={activatePlayer}
-                style={{ backgroundImage: `url(${posterUrl})` }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -380,7 +379,6 @@ const VideoPlayer = ({ videoSources, posterUrl }) => {
                 onClick={togglePlayPause}
                 onDoubleClick={toggleFullscreen}
                 preload="metadata"
-                autoPlay={true}
             />
 
             <div
