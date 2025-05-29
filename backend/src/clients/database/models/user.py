@@ -1,5 +1,5 @@
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID
-from sqlalchemy import String
+from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 from src.clients.database.base import Base
@@ -16,6 +16,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     username: Mapped[str] = mapped_column(
         String(length=320), unique=True, nullable=False
     )
+    description: Mapped[str] = mapped_column(Text, nullable=True)
 
     ratings: Mapped[list["AnimeRating"]] = relationship(
         "AnimeRating", back_populates="user", cascade="all, delete-orphan"
