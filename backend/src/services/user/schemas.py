@@ -13,7 +13,7 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
 class UserCreate(schemas.BaseUserCreate):
     username: str
     email: EmailStr | None = Field(None)
-    description: str | None
+    description: str | None = Field(None)
 
 
 class UserUpdate(schemas.BaseUserUpdate):
