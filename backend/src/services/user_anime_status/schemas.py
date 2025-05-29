@@ -26,6 +26,7 @@ class UpdateUserAnimeStatusSchema(BaseModel):
 
 
 class UserAnimeStatusResponseSchema(BaseModel):
+    id: int
     anime_id: int
     user_id: UUID
     status: AnimeStatus | None = None

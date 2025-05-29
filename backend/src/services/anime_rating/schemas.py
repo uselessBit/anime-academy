@@ -18,6 +18,7 @@ class UpdateAnimeRatingSchema(BaseModel):
     created_at: datetime | None = None
 
 class AnimeRatingResponseSchema(BaseModel):
+    id: int
     user_id: UUID | None = None
     anime_id: int | None = None
     rating: int | None = Field(..., ge=1, le=10)
