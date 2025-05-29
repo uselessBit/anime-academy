@@ -116,7 +116,6 @@ export const CommentsSection = ({ animeId }) => {
             )}
 
             {loading && <div className="loading">Загрузка комментариев...</div>}
-            {error && <div className="error">{error}</div>}
 
             <div className="comments-list">
                 {comments.map((comment) => (

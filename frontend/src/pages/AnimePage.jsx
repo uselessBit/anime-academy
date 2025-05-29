@@ -248,44 +248,52 @@ export default function AnimePage() {
                 </div>
             </div>
 
-            <div className="container anime-container" id="player">
-                <div className="margin-container">
-                    <VideoPlayer
-                        videoSources={[
-                            {
-                                label: '1080p',
-                                url: anime.series[selectedEpisode].iframe_html,
-                            },
-                            {
-                                label: '720p',
-                                url: anime.series[selectedEpisode].iframe_html,
-                            },
-                            {
-                                label: '480p',
-                                url: anime.series[selectedEpisode].iframe_html,
-                            },
-                            {
-                                label: '360p',
-                                url: anime.series[selectedEpisode].iframe_html,
-                            },
-                        ]}
-                    />
+            {anime.series && selectedEpisode && (
+                <div className="container anime-container" id="player">
+                    <div className="margin-container">
+                        <VideoPlayer
+                            videoSources={[
+                                {
+                                    label: '1080p',
+                                    url: anime.series[selectedEpisode]
+                                        .iframe_html,
+                                },
+                                {
+                                    label: '720p',
+                                    url: anime.series[selectedEpisode]
+                                        .iframe_html,
+                                },
+                                {
+                                    label: '480p',
+                                    url: anime.series[selectedEpisode]
+                                        .iframe_html,
+                                },
+                                {
+                                    label: '360p',
+                                    url: anime.series[selectedEpisode]
+                                        .iframe_html,
+                                },
+                            ]}
+                        />
 
-                    <div className="episodes-numbers">
-                        {anime.series.map((ep) => (
-                            <button
-                                className={`standard-input button ${ep.episode_number - 1 === selectedEpisode ? 'active' : ''}`}
-                                key={ep.episode_number}
-                                onClick={() =>
-                                    setSelectedEpisode(ep.episode_number - 1)
-                                }
-                            >
-                                {ep.episode_number} эпизод
-                            </button>
-                        ))}
+                        <div className="episodes-numbers">
+                            {anime.series.map((ep) => (
+                                <button
+                                    className={`standard-input button ${ep.episode_number - 1 === selectedEpisode ? 'active' : ''}`}
+                                    key={ep.episode_number}
+                                    onClick={() =>
+                                        setSelectedEpisode(
+                                            ep.episode_number - 1
+                                        )
+                                    }
+                                >
+                                    {ep.episode_number} эпизод
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             <div className="container anime-container" id="player">
                 <div className="margin-container">

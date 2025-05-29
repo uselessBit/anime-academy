@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import '../../styles/homePage/MainPoster.css'
 import { useAnime } from '../../hooks/useAnime'
 import API_BASE_URL from '../../config.js'
+import usePageTransition from '../../hooks/usePageTransition.jsx'
 
 export default function MainPoster() {
     const [imageLoaded, setImageLoaded] = useState(false)
     const { anime, loading, error } = useAnime(1)
+    const { handleSwitch } = usePageTransition()
 
     if (loading) return <div className="main-anime-container container"></div>
     if (error) return <div>Error: {error}</div>
@@ -19,6 +21,7 @@ export default function MainPoster() {
     return (
         <div
             className={`main-anime-container container ${imageLoaded ? 'loaded' : ''}`}
+            onClick={() => handleSwitch(`/anime/${anime.id}`)}
         >
             <div className="image-container">
                 <img
