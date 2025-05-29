@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { useComments } from '../../hooks/useComments'
+import { useUser } from '../../hooks/useUser'
 import '../../styles/animePage/CommentsSection.css'
 
 const Comment = ({ comment, onReply, onShowReplies, repliesLoaded }) => {
     const [showReplyForm, setShowReplyForm] = useState(false)
     const [replyContent, setReplyContent] = useState('')
-    const { user } = useAuth()
+    const [showReplies, setShowReplies] = useState(false)
+    const { user: currentUser } = useAuth()
+
+    const { user: commentUser, loading: userLoading } = useUser(comment.user_id)
 
     const handleReplySubmit = () => {
         onReply(replyContent, comment.id)
@@ -14,23 +18,47 @@ const Comment = ({ comment, onReply, onShowReplies, repliesLoaded }) => {
         setShowReplyForm(false)
     }
 
+    const canReply = comment.level === 0
+
+    const handleShowReplies = () => {
+        if (!comment.repliesLoaded) {
+            onShowReplies(comment.id)
+        }
+        setShowReplies(true)
+    }
+
+    const handleHideReplies = () => {
+        setShowReplies(false)
+    }
+
     return (
         <div className={`comment level-${comment.level}`}>
             <div className="comment-header">
                 <div className="user-avatar">
-                    {comment.user?.username?.charAt(0).toUpperCase()}
+                    {commentUser?.username?.charAt(0).toUpperCase() || 'U'}
                 </div>
                 <div className="user-info">
-                    <span className="username">{comment.user?.username}</span>
-                    <span className="date">
-                        {new Date(comment.created_at).toLocaleDateString()}
-                    </span>
+                    <div className="username">
+                        {userLoading
+                            ? 'Загрузка...'
+                            : commentUser?.username ||
+                              'Неизвестный пользователь'}
+                    </div>
+                    <div className="date">
+                        {new Date(comment.created_at).toLocaleString('ru-RU', {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })}
+                    </div>
                 </div>
             </div>
             <div className="comment-content">{comment.comment}</div>
 
             <div className="comment-actions">
-                {user && !showReplyForm && (
+                {currentUser && canReply && !showReplyForm && (
                     <button
                         className="reply-btn"
                         onClick={() => setShowReplyForm(true)}
@@ -39,13 +67,24 @@ const Comment = ({ comment, onReply, onShowReplies, repliesLoaded }) => {
                     </button>
                 )}
 
-                {comment.replies_count > 0 && !comment.repliesLoaded && (
-                    <button
-                        className="show-replies-btn"
-                        onClick={() => onShowReplies(comment.id)}
-                    >
-                        Показать ответы ({comment.replies_count})
-                    </button>
+                {comment.has_reply && canReply && (
+                    <>
+                        {!showReplies ? (
+                            <button
+                                className="show-replies-btn"
+                                onClick={handleShowReplies}
+                            >
+                                Показать ответы
+                            </button>
+                        ) : (
+                            <button
+                                className="hide-replies-btn"
+                                onClick={handleHideReplies}
+                            >
+                                Скрыть ответы
+                            </button>
+                        )}
+                    </>
                 )}
             </div>
 
@@ -57,26 +96,36 @@ const Comment = ({ comment, onReply, onShowReplies, repliesLoaded }) => {
                         placeholder="Ваш ответ..."
                     />
                     <div className="form-actions">
-                        <button onClick={() => setShowReplyForm(false)}>
+                        <button
+                            className="standard-input button"
+                            onClick={() => setShowReplyForm(false)}
+                        >
                             Отмена
                         </button>
-                        <button onClick={handleReplySubmit}>Отправить</button>
+                        <button
+                            className="standard-input button active"
+                            onClick={handleReplySubmit}
+                        >
+                            Отправить
+                        </button>
                     </div>
                 </div>
             )}
 
-            {comment.repliesLoaded && comment.replies.length > 0 && (
-                <div className="replies">
-                    {comment.replies.map((reply) => (
-                        <Comment
-                            key={reply.id}
-                            comment={reply}
-                            onReply={onReply}
-                            onShowReplies={onShowReplies}
-                        />
-                    ))}
-                </div>
-            )}
+            {showReplies &&
+                comment.repliesLoaded &&
+                comment.replies.length > 0 && (
+                    <div className="replies">
+                        {comment.replies.map((reply) => (
+                            <Comment
+                                key={reply.id}
+                                comment={reply}
+                                onReply={onReply}
+                                onShowReplies={onShowReplies}
+                            />
+                        ))}
+                    </div>
+                )}
         </div>
     )
 }
