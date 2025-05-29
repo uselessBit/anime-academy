@@ -39,7 +39,6 @@ const Comment = ({ comment, onReply, onShowReplies, repliesLoaded }) => {
                     </button>
                 )}
 
-                {/* Упрощенное условие для кнопки показа ответов */}
                 {comment.replies_count > 0 && !comment.repliesLoaded && (
                     <button
                         className="show-replies-btn"

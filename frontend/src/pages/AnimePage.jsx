@@ -248,7 +248,7 @@ export default function AnimePage() {
                 </div>
             </div>
 
-            {anime.series && selectedEpisode && (
+            {anime.series[0] && (
                 <div className="container anime-container" id="player">
                     <div className="margin-container">
                         <VideoPlayer
