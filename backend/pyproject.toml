@@ -18,6 +18,7 @@ dependencies = [
     "dependency-injector (>=4.46.0,<5.0.0)",
     "aiofiles (>=24.1.0,<25.0.0)",
     "redis (>=6.0.0,<7.0.0)",
+    "sqladmin (>=0.20.1,<0.21.0)",
 ]
 
 [tool.poetry]
