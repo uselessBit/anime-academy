@@ -1,0 +1,159 @@
+.status-select-container {
+  position: relative;
+  width: 100%;
+}
+.status-select-container .sort-button {
+  width: 100%;
+  position: relative;
+  z-index: 13;
+  height: 64px;
+  border-radius: 24px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.status-select-container .sort-button .button-icon {
+  transition: color 0.3s;
+}
+.status-select-container .sort-button:hover {
+  background: white;
+  color: black;
+}
+.status-select-container .sort-button:hover .button-icon {
+  color: black;
+}
+.status-select-container .sort-button .arrow {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+.status-select-container .sort-button .arrow.down {
+  border-top: 5px solid currentColor;
+}
+.status-select-container .sort-button .arrow.up {
+  border-bottom: 5px solid currentColor;
+}
+.status-select-container .sort-button.active {
+  background: rgb(238, 238, 238);
+  color: black;
+}
+.status-select-container .sort-button.active:hover {
+  background: white;
+}
+.status-select-container .sort-button.active .button-icon {
+  color: black;
+}
+.status-select-container .sort-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.status-select-container .sort-button.has-status {
+  color: var(--status-color);
+}
+.status-select-container .sort-button.has-status .button-icon {
+  color: var(--status-color);
+}
+.status-select-container .sort-button.has-status:hover {
+  color: var(--status-color);
+}
+.status-select-container .sort-button.has-status:hover .button-icon {
+  color: var(--status-color);
+}
+.status-select-container .status-select-menu {
+  width: calc(100% - 24px);
+  top: 80px;
+  left: 0;
+  position: absolute;
+  z-index: 4;
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(20px);
+  outline: rgba(238, 238, 238, 0.15) solid 2px;
+  padding: 12px;
+  border-radius: 24px;
+  gap: 6px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(-10px);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  animation: slideIn 0.3s;
+}
+.status-select-container .status-select-menu.visible {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+.status-select-container .status-select-menu .sort-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 40px;
+  width: 100%;
+  padding: 0 16px;
+}
+.status-select-container .status-select-menu .sort-item .button-icon {
+  transition: color 0.3s;
+  color: white;
+}
+.status-select-container .status-select-menu .sort-item:hover {
+  background: white;
+  color: black;
+}
+.status-select-container .status-select-menu .sort-item:hover .button-icon {
+  color: black;
+}
+.status-select-container .status-select-menu .sort-item.active {
+  background: rgb(238, 238, 238);
+  color: black;
+}
+.status-select-container .status-select-menu .sort-item.active .button-icon {
+  color: black;
+}
+.status-select-container .status-select-menu .sort-item.remove {
+  color: #ff6b6b;
+  border-top: 1px solid rgba(238, 238, 238, 0.15);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.status-select-container .status-select-menu .sort-item.remove .button-icon {
+  color: #ff6b6b;
+}
+.status-select-container .status-select-menu .sort-item.remove:hover .button-icon {
+  color: #ff6b6b;
+}
+.status-select-container .status-select-menu .sort-item.has-status {
+  color: var(--status-color);
+}
+.status-select-container .status-select-menu .sort-item.has-status .button-icon {
+  color: var(--status-color);
+}
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.status-select-container .sort-button[style*="--status-color"],
+.status-select-container .sort-item[style*="--status-color"] {
+  --status-color-rgb: hexToRgb(var(--status-color));
+}
+
+/*# sourceMappingURL=StatusSelect.css.map */

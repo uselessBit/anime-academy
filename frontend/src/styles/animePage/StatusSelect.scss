@@ -1,0 +1,198 @@
+.status-select-container {
+    position: relative;
+    width: 100%;
+
+    .sort-button {
+        width: 100%;
+        position: relative;
+        z-index: 13;
+        height: 64px;
+        border-radius: 24px;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+
+        .button-icon {
+            transition: color 0.3s;
+        }
+
+        &:hover {
+            background: white;
+            color: black;
+            .button-icon {
+                color: black;
+            }
+        }
+
+        .arrow {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+
+            &.down {
+                border-top: 5px solid currentColor;
+            }
+
+            &.up {
+                border-bottom: 5px solid currentColor;
+            }
+        }
+
+        &.active {
+            background: rgba(238, 238, 238, 1);
+            color: black;
+
+            &:hover {
+                background: white;
+            }
+
+            .button-icon {
+                color: black;
+            }
+        }
+
+        &.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        &.has-status {
+            color: var(--status-color);
+
+            .button-icon {
+                color: var(--status-color);
+            }
+
+            &:hover {
+                color: var(--status-color);
+
+                .button-icon {
+                    color: var(--status-color);
+                }
+            }
+        }
+    }
+
+    .status-select-menu {
+        width: calc(100% - 24px);
+        top: 80px;
+        left: 0;
+        position: absolute;
+        z-index: 4;
+        background: rgba(30, 30, 30, 0.8);
+        backdrop-filter: blur(20px);
+        outline: rgba(238, 238, 238, 0.15) solid 2px;
+        padding: 12px;
+        border-radius: 24px;
+        gap: 6px;
+        display: flex;
+        flex-direction: column;
+
+        opacity: 0;
+        transform: translateY(-10px);
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+            opacity 0.3s ease,
+            transform 0.3s ease,
+            visibility 0.3s;
+        animation: slideIn 0.3s;
+
+        &.visible {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .sort-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 40px;
+            width: 100%;
+            padding: 0 16px;
+
+            .button-icon {
+                transition: color 0.3s;
+                color: white;
+            }
+
+            &:hover {
+                background: white;
+                color: black;
+                .button-icon {
+                    color: black;
+                }
+            }
+
+            &.active {
+                background: rgba(238, 238, 238, 1);
+                color: black;
+
+                .button-icon {
+                    color: black;
+                }
+            }
+
+            &.remove {
+                color: #ff6b6b;
+                border-top: 1px solid rgba(238, 238, 238, 0.15);
+                margin-top: 6px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .button-icon {
+                    color: #ff6b6b;
+                }
+
+                &:hover {
+                    .button-icon {
+                        color: #ff6b6b;
+                    }
+                }
+            }
+
+            &.has-status {
+                color: var(--status-color);
+
+                .button-icon {
+                    color: var(--status-color);
+                }
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.status-select-container {
+    .sort-button,
+    .sort-item {
+        &[style*="--status-color"] {
+            --status-color-rgb: #{hexToRgb(var(--status-color))};
+        }
+    }
+}
+
+@function hexToRgb($hex) {
+    @return red($hex), green($hex), blue($hex);
+}

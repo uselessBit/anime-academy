@@ -9,6 +9,7 @@ export const useAnime = (animeId) => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [currentFilters, setCurrentFilters] = useState({})
+    const [userStatus, setUserStatus] = useState(null)
 
     useEffect(() => {
         const loadGenres = async () => {
@@ -79,6 +80,8 @@ export const useAnime = (animeId) => {
         animes: animeId ? null : animes,
         anime: animeId ? anime : null,
         loading: loading || !genres.length,
+        userStatus,
+        updateUserStatus: setUserStatus,
         error,
         updateFilters: (newFilters) => {
             setCurrentFilters((prev) => ({ ...prev, ...newFilters }))

@@ -9,6 +9,8 @@ import AnimeRating from '../components/AnimeRating.jsx'
 import API_BASE_URL from '../config.js'
 import VideoPlayer from '../components/VideoPlayer'
 import { AnimeService } from '../api/AnimeService.jsx'
+import StatusSelect from '../components/animePage/StatusSelect'
+import { useStatus } from '../hooks/useStatus'
 
 export default function AnimePage() {
     const { id } = useParams()
@@ -17,6 +19,11 @@ export default function AnimePage() {
     const { user } = useAuth()
     const [showRatingModal, setShowRatingModal] = useState(false)
     const [notification, setNotification] = useState(null)
+    const {
+        status,
+        loading: statusLoading,
+        handleStatusChange,
+    } = useStatus(Number(id), user?.id)
 
     useEffect(() => {
         if (showRatingModal) document.body.style.overflow = 'hidden'
@@ -130,9 +137,11 @@ export default function AnimePage() {
                                 Оценить
                             </button>
 
-                            <button className="standard-input button play-button">
-                                Добавить в список
-                            </button>
+                            <StatusSelect
+                                value={status?.status}
+                                onChange={handleStatusChange}
+                                disabled={!user || statusLoading}
+                            />
                         </div>
                         <div className="anime-info">
                             <div className="item">

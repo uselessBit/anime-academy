@@ -10,7 +10,7 @@ from src.services.user_anime_status.interface import UserAnimeStatusServiceI
 from src.services.user_anime_status.schemas import UserAnimeStatusResponseSchema
 
 
-class UserAnimeStatusService(BaseService, UserAnimeStatusServiceI):
+class StatusService(BaseService, UserAnimeStatusServiceI):
     async def get_user_anime_status(self, anime_id: int, user_id: UUID) -> UserAnimeStatusResponseSchema | None:
         async with self.session() as session:
             result = await session.execute(
