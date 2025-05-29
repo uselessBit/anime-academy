@@ -2,12 +2,15 @@ from abc import abstractmethod
 from typing import Protocol
 
 from src.clients.database.models.anime_comment import AnimeComment
-from src.services.anime_comment.schemas import CommentTreeResponse, AnimeCommentResponseSchema
+from src.services.anime_comment.schemas import CommentTreeResponse, AnimeCommentResponseSchema, CreateAnimeCommentSchema
 
 
 class AnimeCommentServiceI(Protocol):
     @abstractmethod
     async def get_comment_tree(self, comment_id: int) -> CommentTreeResponse: ...
+
+    @abstractmethod
+    async def create(self, comment_data: CreateAnimeCommentSchema): ...
 
     @abstractmethod
     async def get_anime_comments(self, anime_id: int) -> list[AnimeCommentResponseSchema]: ...

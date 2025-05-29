@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import DateTime, ForeignKey, func
+from sqlalchemy import DateTime, ForeignKey, func, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import UUID as SQLAlchemyUUID
 
@@ -20,6 +20,7 @@ class AnimeComment(Base):
     comment: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     level: Mapped[int] = mapped_column(default=0)
+    has_reply: Mapped[bool] = mapped_column(Boolean, default=False)
 
     user: Mapped["User"] = relationship("User", back_populates="comments")
     anime: Mapped["Anime"] = relationship("Anime", back_populates="comments")

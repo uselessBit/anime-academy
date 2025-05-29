@@ -1,15 +1,30 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from pydantic import TypeAdapter
 
 from src.clients.database.models.anime_comment import AnimeComment
 from src.services.anime_comment.interface import AnimeCommentServiceI
-from src.services.anime_comment.schemas import CommentTreeResponse, AnimeCommentResponseSchema
+from src.services.anime_comment.schemas import CommentTreeResponse, AnimeCommentResponseSchema, CreateAnimeCommentSchema
 from src.services.base import BaseService
 from src.services.errors import CommentNotFoundError
 
 
 class AnimeCommentService(BaseService, AnimeCommentServiceI):
+    async def create(self, comment_data: CreateAnimeCommentSchema):
+        async with self.session() as session:
+            new_comment = AnimeComment(**comment_data.model_dump())
+            session.add(new_comment)
+            await session.flush()
+
+            if new_comment.parent_id:
+                parent = await session.get(AnimeComment, new_comment.parent_id)
+                if parent:
+                    parent.has_reply = True
+
+            await session.commit()
+            return new_comment
+
+
     async def get_anime_comments(self, anime_id: int) -> list[AnimeCommentResponseSchema]:
         async with self.session() as session:
             result = await session.execute(
@@ -46,12 +61,14 @@ class AnimeCommentService(BaseService, AnimeCommentServiceI):
 
         for comment in comments:
             tree_map[comment.id] = CommentTreeResponse(
+                id=comment.id,
                 user_id=comment.user_id,
                 anime_id=comment.anime_id,
                 parent_id=comment.parent_id,
                 comment=comment.comment,
                 created_at=comment.created_at,
                 level=comment.level,
+                has_reply=comment.has_reply,
                 replies=[],
             )
             if comment.parent_id is not None:
