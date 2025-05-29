@@ -121,4 +121,9 @@ input[type=number] {
   gap: 16px;
 }
 
+button,
+textarea {
+  font-family: "Montserrat", serif;
+}
+
 /*# sourceMappingURL=index.css.map */

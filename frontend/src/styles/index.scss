@@ -130,3 +130,8 @@ input[type='number'] {
     display: flex;
     gap: 16px;
 }
+
+button,
+textarea {
+    font-family: $font-stack;
+}

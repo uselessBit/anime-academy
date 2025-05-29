@@ -8,10 +8,10 @@ import '../styles/animePage/AnimePage.css'
 import AnimeRating from '../components/AnimeRating.jsx'
 import API_BASE_URL from '../config.js'
 import VideoPlayer from '../components/VideoPlayer'
-import { AnimeService } from '../api/AnimeService.jsx'
 import StatusSelect from '../components/animePage/StatusSelect'
 import { useStatus } from '../hooks/useStatus'
 import { useRating } from '../hooks/useRating'
+import { CommentsSection } from '../components/animePage/CommentsSection'
 
 export default function AnimePage() {
     const { id } = useParams()
@@ -270,6 +270,7 @@ export default function AnimePage() {
                             },
                         ]}
                     />
+
                     <div className="episodes-numbers">
                         {anime.series.map((ep) => (
                             <button
@@ -283,6 +284,12 @@ export default function AnimePage() {
                             </button>
                         ))}
                     </div>
+                </div>
+            </div>
+
+            <div className="container anime-container" id="player">
+                <div className="margin-container">
+                    <CommentsSection animeId={Number(id)} />
                 </div>
             </div>
 
