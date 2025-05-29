@@ -1,7 +1,12 @@
-from fastapi import APIRouter
+from uuid import UUID
 
+from src.clients.database.models.user import User
+from src.container import container
 from src.services.user.schemas import UserCreate, UserRead, UserUpdate
 from src.services.user.service import auth_backend, fastapi_users
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 user_router = APIRouter(prefix="")
 
@@ -21,8 +26,18 @@ user_router.include_router(
     prefix="/auth",
     tags=["auth"],
 )
+
 user_router.include_router(
     fastapi_users.get_users_router(UserRead, UserUpdate),
     prefix="/users",
     tags=["users"],
 )
+
+
+@user_router.get("/users/open-data/{user_id}", response_model=UserRead, tags=["users"])
+async def get_user_by_id(user_id: UUID, session: AsyncSession = Depends(container.database_session_no_context())):
+    result = await session.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
