@@ -54,4 +54,19 @@ export const AnimeService = {
             throw error
         }
     },
+
+    searchAnimeByTitle: async (title) => {
+        try {
+            const response = await axios.get(
+                `${API_BASE_URL}api/v1/crud/anime/search_by_title`,
+                {
+                    params: { title },
+                }
+            )
+            return response.data
+        } catch (error) {
+            console.error('Error searching anime:', error)
+            throw error
+        }
+    },
 }

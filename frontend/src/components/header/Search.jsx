@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../../styles/Search.css'
 import AnimeRating from '../AnimeRating.jsx'
-import axios from 'axios'
+import { AnimeService } from '../../api/AnimeService' // Импорт сервиса для поиска
 import usePageTransition from '../../hooks/usePageTransition.jsx'
 import API_BASE_URL from '../../config.js'
 
@@ -19,9 +19,14 @@ const Search = () => {
     }
 
     useEffect(() => {
-        if (isActive) document.body.style.overflow = 'hidden'
-        else document.body.style.overflow = 'auto'
+        // Блокировка скролла при активном поиске
+        if (isActive) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
 
+        // Обработка клавиши Escape
         const handleKeydown = (e) => {
             if (e.key === 'Escape') {
                 setQuery('')
@@ -47,22 +52,24 @@ const Search = () => {
     }
 
     useEffect(() => {
-        if (!query || query === '') return
+        if (!query || query.trim() === '') {
+            setResults([])
+            return
+        }
 
         setLoading(true)
-        setResults([])
 
+        // Таймер для задержки запроса
         const timeoutId = setTimeout(() => {
-            axios
-                .get(`${API_BASE_URL}/api/anime/search`, {
-                    params: { title: query },
-                })
+            AnimeService.searchAnimeByTitle(query)
                 .then((response) => {
-                    setResults(response.data)
+                    setResults(response)
                     setLoading(false)
                 })
-                .catch(() => {
+                .catch((error) => {
+                    console.error('Search error:', error)
                     setLoading(false)
+                    setResults([])
                 })
         }, 300)
 
@@ -70,12 +77,9 @@ const Search = () => {
     }, [query])
 
     const handleChange = (e) => {
-        setQuery(e.target.value)
-        if (e.target.value) {
-            setIsActive(true)
-        } else {
-            setIsActive(false)
-        }
+        const value = e.target.value
+        setQuery(value)
+        setIsActive(value.trim() !== '')
     }
 
     return (
@@ -112,40 +116,49 @@ const Search = () => {
             >
                 <div className="results-content">
                     {loading && <div className="comment">Загрузка...</div>}
+
                     {!loading && results.length === 0 && query && (
                         <div className="comment">Ничего не найдено</div>
                     )}
-                    {results.map((result) => (
-                        <div
-                            key={result.id}
-                            className="search-card"
-                            onClick={() => {
-                                setIsActive(false)
-                                setQuery('')
-                                setResults([])
-                                handleSwitch(`/anime/${result.id}`)
-                            }}
-                        >
-                            <AnimeRating rating={result.average_rating} />
 
-                            <img
-                                src={`/posters/${result.image_url}.jpg`}
-                                alt=""
-                                className="search-card__img blurred"
-                            />
+                    {!loading &&
+                        results.map((result) => (
+                            <div
+                                key={result.id}
+                                className="search-card"
+                                onClick={() => {
+                                    setIsActive(false)
+                                    setQuery('')
+                                    setResults([])
+                                    handleSwitch(`/anime/${result.id}`)
+                                }}
+                            >
+                                <AnimeRating rating={result.rating} />
 
-                            <img
-                                src={`/posters/${result.image_url}.jpg`}
-                                alt=""
-                                className="search-card__img"
-                            />
+                                <img
+                                    src={
+                                        result.poster_url ||
+                                        `${API_BASE_URL}media/anime/${result.image_url}`
+                                    }
+                                    alt=""
+                                    className="search-card__img blurred"
+                                />
 
-                            <div className="text-container">
-                                <h1>{result.title}</h1>
-                                <p>{result.description}</p>
+                                <img
+                                    src={
+                                        result.poster_url ||
+                                        `${API_BASE_URL}media/anime/${result.image_url}`
+                                    }
+                                    alt=""
+                                    className="search-card__img"
+                                />
+
+                                <div className="text-container">
+                                    <h1>{result.title}</h1>
+                                    <p>{result.description}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             </div>
         </>

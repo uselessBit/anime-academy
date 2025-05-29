@@ -102,6 +102,15 @@ search.active form {
 }
 .search-results .search-card p {
   font-size: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+  line-clamp: 7;
+  box-orient: vertical;
 }
 .search-results .search-card .anime-rating {
   right: 40px;
