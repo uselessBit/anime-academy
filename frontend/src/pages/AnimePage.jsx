@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAnime } from '../hooks/useAnime'
 import { useAuth } from '../hooks/useAuth'
@@ -12,9 +12,11 @@ import StatusSelect from '../components/animePage/StatusSelect'
 import { useStatus } from '../hooks/useStatus'
 import { useRating } from '../hooks/useRating'
 import { CommentsSection } from '../components/animePage/CommentsSection'
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 export default function AnimePage() {
     const { id } = useParams()
+    const episodesContainerRef = useRef(null)
     const { anime, loading, error } = useAnime(Number(id))
     const [selectedEpisode, setSelectedEpisode] = useState(0)
     const { user } = useAuth()
@@ -46,6 +48,16 @@ export default function AnimePage() {
             await refetchRating()
         }
         setShowRatingModal(true)
+    }
+
+    const scrollEpisodes = (direction) => {
+        if (episodesContainerRef.current) {
+            const scrollAmount = 300 // Шаг прокрутки
+            episodesContainerRef.current.scrollBy({
+                left: direction === 'left' ? -scrollAmount : scrollAmount,
+                behavior: 'smooth',
+            })
+        }
     }
 
     const handleRateAnime = async (ratingValue) => {
@@ -276,20 +288,41 @@ export default function AnimePage() {
                             ]}
                         />
 
-                        <div className="episodes-numbers">
-                            {anime.series.map((ep) => (
-                                <button
-                                    className={`standard-input button ${ep.episode_number - 1 === selectedEpisode ? 'active' : ''}`}
-                                    key={ep.episode_number}
-                                    onClick={() =>
-                                        setSelectedEpisode(
-                                            ep.episode_number - 1
-                                        )
-                                    }
-                                >
-                                    {ep.episode_number} эпизод
-                                </button>
-                            ))}
+                        <div className="episodes-scroll-container">
+                            <button
+                                className="scroll-button left"
+                                onClick={() => scrollEpisodes('left')}
+                                aria-label="Прокрутить влево"
+                            >
+                                <FaChevronLeft />
+                            </button>
+
+                            <div
+                                className="episodes-numbers"
+                                ref={episodesContainerRef}
+                            >
+                                {anime.series.map((ep) => (
+                                    <button
+                                        className={`standard-input button ${ep.episode_number - 1 === selectedEpisode ? 'active' : ''}`}
+                                        key={ep.episode_number}
+                                        onClick={() =>
+                                            setSelectedEpisode(
+                                                ep.episode_number - 1
+                                            )
+                                        }
+                                    >
+                                        {ep.episode_number} эпизод
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                className="scroll-button right"
+                                onClick={() => scrollEpisodes('right')}
+                                aria-label="Прокрутить вправо"
+                            >
+                                <FaChevronRight />
+                            </button>
                         </div>
                     </div>
                 </div>

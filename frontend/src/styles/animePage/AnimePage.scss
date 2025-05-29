@@ -303,17 +303,65 @@ display: flex;
                 width: fit-content;
             }
         }
-
-        .episodes-numbers {
-            display: flex;
-            gap: 16px;
-            font-size: 24px;
-            padding: 8px;
-        }
     }
 }
 
 .comments-container {
     margin-top: 40px;
     padding: 0 20px;
+}
+
+.episodes-scroll-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .scroll-button {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+        transition: background 0.3s;
+        flex-shrink: 0;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        &.left {
+            left: 0;
+        }
+
+        &.right {
+            right: 0;
+        }
+    }
+
+    .episodes-numbers {
+        display: flex;
+        gap: 16px;
+        font-size: 24px;
+        padding: 8px;
+        overflow-x: auto;
+        width: 100%;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+        flex-grow: 1;
+
+        &::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        button {
+            flex-shrink: 0; /* Предотвращает сжатие кнопок */
+        }
+    }
 }
