@@ -106,14 +106,24 @@ $transition-duration: 0.2s;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    &.second {
+        margin-top: 16px;
+    }
 }
 
 .selected-rating {
-    text-align: center;
     font-size: 1.5rem;
     color: $text-color;
     font-weight: bold;
-    width: 160px;
+    text-align: center;
+    flex: 1;
+}
+
+.selected-rating-prev {
+    flex: 1;
+    opacity: 0.5;
+    font-weight: 500;
 }
 
 .rating-modal-footer {
@@ -127,5 +137,9 @@ $transition-duration: 0.2s;
             opacity: 0.6;
             cursor: not-allowed;
         }
+    }
+
+    .delete-btn {
+        min-width: fit-content;
     }
 }

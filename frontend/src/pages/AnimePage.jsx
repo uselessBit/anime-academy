@@ -11,6 +11,7 @@ import VideoPlayer from '../components/VideoPlayer'
 import { AnimeService } from '../api/AnimeService.jsx'
 import StatusSelect from '../components/animePage/StatusSelect'
 import { useStatus } from '../hooks/useStatus'
+import { useRating } from '../hooks/useRating'
 
 export default function AnimePage() {
     const { id } = useParams()
@@ -25,28 +26,84 @@ export default function AnimePage() {
         handleStatusChange,
     } = useStatus(Number(id), user?.id)
 
+    const {
+        rating: currentRating,
+        ratingId,
+        loading: ratingLoading,
+        error: ratingError,
+        rateAnime,
+        deleteRating,
+        refetch: refetchRating,
+    } = useRating(Number(id), user?.id)
+
     useEffect(() => {
         if (showRatingModal) document.body.style.overflow = 'hidden'
         else document.body.style.overflow = 'auto'
     }, [showRatingModal])
 
+    const handleOpenRatingModal = async () => {
+        if (user) {
+            await refetchRating()
+        }
+        setShowRatingModal(true)
+    }
+
     const handleRateAnime = async (ratingValue) => {
         try {
-            await AnimeService.createRating({
-                user_id: user.id,
-                anime_id: id,
-                rating: ratingValue,
-                created_at: new Date().toISOString(),
-            })
-            setNotification({
-                type: 'success',
-                message: 'Оценка успешно сохранена!',
-            })
+            if (!user) {
+                setNotification({
+                    type: 'error',
+                    message: 'Для оценки необходимо авторизоваться',
+                })
+                return
+            }
+
+            const success = await rateAnime(ratingValue)
+
+            if (success) {
+                setNotification({
+                    type: 'success',
+                    message: ratingId
+                        ? 'Оценка обновлена!'
+                        : 'Оценка сохранена!',
+                })
+            } else {
+                setNotification({
+                    type: 'error',
+                    message: ratingError || 'Ошибка сохранения оценки',
+                })
+            }
         } catch (error) {
             setNotification({
                 type: 'error',
-                message:
-                    error.response?.data?.detail || 'Ошибка сохранения оценки',
+                message: error.message || 'Ошибка сохранения оценки',
+            })
+        } finally {
+            setShowRatingModal(false)
+        }
+    }
+
+    const handleDeleteRating = async () => {
+        try {
+            if (!user || !ratingId) return
+
+            const success = await deleteRating()
+
+            if (success) {
+                setNotification({
+                    type: 'success',
+                    message: 'Оценка удалена!',
+                })
+            } else {
+                setNotification({
+                    type: 'error',
+                    message: ratingError || 'Ошибка удаления оценки',
+                })
+            }
+        } catch (error) {
+            setNotification({
+                type: 'error',
+                message: error.message || 'Ошибка удаления оценки',
             })
         } finally {
             setShowRatingModal(false)
@@ -127,7 +184,7 @@ export default function AnimePage() {
 
                             <button
                                 className="standard-input button image-button play-button"
-                                onClick={() => setShowRatingModal(true)}
+                                onClick={handleOpenRatingModal}
                             >
                                 <img
                                     src="/icons/star.svg"
@@ -241,6 +298,10 @@ export default function AnimePage() {
                 show={showRatingModal}
                 onClose={() => setShowRatingModal(false)}
                 onSubmit={handleRateAnime}
+                onDelete={handleDeleteRating}
+                currentRating={currentRating || 0}
+                hasRating={!!ratingId}
+                loading={ratingLoading}
             />
         </>
     )
