@@ -194,7 +194,7 @@ class AnimeService(BaseService, AnimeServiceI):
             anime = await session.get(Anime, anime_id)
             if not anime:
                 raise AnimeNotFoundError
-            if filename := anime["image_url"]:
+            if filename := anime.image_url:
                 await delete_image(str(filename), anime_path)
             await session.delete(anime)
             await session.commit()
