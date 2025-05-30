@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import usePageTransition from '../../hooks/usePageTransition.jsx'
-import { useAuth } from '../../hooks/useAuth' // Заменяем контекст на хук
+import { useAuth } from '../../hooks/useAuth'
 import '../../styles/Header.css'
 import Search from './Search.jsx'
 
 const Header = () => {
-    const { user } = useAuth() // Получаем пользователя из хука
+    const { user } = useAuth()
     const [animation, setAnimation] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const { handleSwitch } = usePageTransition()
 
-    // Анимация появления шапки
     setTimeout(() => {
         setAnimation(true)
     }, 600)
 
-    // Отслеживание скролла
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 0)
@@ -37,14 +35,21 @@ const Header = () => {
 
                     <Search />
 
-                    <button
-                        className="standard-input button"
-                        onClick={() =>
-                            handleSwitch(user ? '/profile' : '/login')
-                        }
-                    >
-                        {user ? 'Профиль' : 'Войти'}
-                    </button>
+                    <div className="buttons-container">
+                        {user && (
+                            <button className="standard-input button">
+                                Админка
+                            </button>
+                        )}
+                        <button
+                            className="standard-input button"
+                            onClick={() =>
+                                handleSwitch(user ? '/profile' : '/login')
+                            }
+                        >
+                            {user ? 'Профиль' : 'Войти'}
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
