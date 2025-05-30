@@ -38,11 +38,16 @@ export const RatingService = {
         }
     },
 
-    updateRating: async (ratingId, ratingValue) => {
+    updateRating: async (ratingId, ratingValue, userId, animeID, date) => {
         try {
             const response = await axios.patch(
                 `${API_BASE_URL}api/v1/crud/anime_rating/${ratingId}`,
-                { rating: ratingValue }
+                {
+                    rating: ratingValue,
+                    user_id: userId,
+                    anime_id: animeID,
+                    created_at: date,
+                }
             )
             return response.data
         } catch (error) {

@@ -33,7 +33,10 @@ export const useRating = (animeId, userId) => {
             if (ratingData) {
                 result = await RatingService.updateRating(
                     ratingData.id,
-                    ratingValue
+                    ratingValue,
+                    userId,
+                    animeId,
+                    new Date().toISOString()
                 )
             } else {
                 result = await RatingService.createRating({
