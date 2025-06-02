@@ -10,7 +10,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 const STATUSES = {
     planned: 'В планах',
-    watching: 'Смотрю',
+    in_progress: 'Смотрю',
     rewatching: 'Пересматриваю',
     completed: 'Просмотрено',
     paused: 'Приостановлено',
@@ -18,7 +18,7 @@ const STATUSES = {
 }
 
 const ProfilePage = () => {
-    const { user, logout } = useAuth()
+    const { user, logout, updateUser } = useAuth()
     const { handleSwitch } = usePageTransition()
     const [isEditing, setIsEditing] = useState(false)
     const [updatedUser, setUpdatedUser] = useState({
@@ -30,8 +30,8 @@ const ProfilePage = () => {
     const [genres, setGenres] = useState([])
     const [loadingStatuses, setLoadingStatuses] = useState(true)
     const [loadingGenres, setLoadingGenres] = useState(true)
+    const [saveError, setSaveError] = useState(null)
 
-    // Загружаем жанры
     useEffect(() => {
         const loadGenres = async () => {
             try {
@@ -47,13 +47,11 @@ const ProfilePage = () => {
         loadGenres()
     }, [])
 
-    // Функция для преобразования ID жанров в названия
     const mapGenresToAnime = (anime) => {
         if (!anime) return null
 
         return {
             ...anime,
-            // Добавляем поле genres с названиями жанров
             genres: anime.genre_ids.map(
                 (id) =>
                     genres.find((g) => g.id === id)?.name || 'Неизвестный жанр'
@@ -61,7 +59,6 @@ const ProfilePage = () => {
         }
     }
 
-    // Загружаем статусы пользователя
     useEffect(() => {
         if (!user?.id || loadingGenres) return
 
@@ -70,20 +67,17 @@ const ProfilePage = () => {
             try {
                 const statuses = await StatusService.getUserStatuses(user.id)
 
-                // Инициализируем объект для группировки
                 const grouped = {}
                 for (const status of Object.keys(STATUSES)) {
                     grouped[status] = []
                 }
 
-                // Заполняем группировку
                 for (const status of statuses) {
                     grouped[status.status].push(status.anime_id)
                 }
 
                 setAnimeStatuses(grouped)
 
-                // Для каждого ID аниме, которого нет в кеше, загружаем
                 const animeIds = statuses.map((s) => s.anime_id)
                 const newAnimeCache = { ...animeCache }
                 let needUpdate = false
@@ -93,7 +87,6 @@ const ProfilePage = () => {
                         try {
                             const animeData =
                                 await AnimeService.fetchAnimeById(id)
-                            // Добавляем названия жанров к данным аниме
                             newAnimeCache[id] = mapGenresToAnime(animeData)
                             needUpdate = true
                         } catch (error) {
@@ -131,8 +124,19 @@ const ProfilePage = () => {
     }
 
     const handleSave = async () => {
-        // Здесь должна быть логика обновления данных пользователя
-        setIsEditing(false)
+        try {
+            const success = await updateUser(updatedUser)
+
+            if (success) {
+                setIsEditing(false)
+                setSaveError(null)
+            } else {
+                setSaveError('Не удалось обновить данные')
+            }
+        } catch (error) {
+            console.error('Ошибка при обновлении:', error)
+            setSaveError('Произошла ошибка при обновлении данных')
+        }
     }
 
     const getStatusCount = (status) => {
@@ -144,9 +148,8 @@ const ProfilePage = () => {
         return ids.map((id) => animeCache[id]).filter(Boolean)
     }
 
-    const scrollRefs = useRef({}) // Ref для контейнеров скролла
+    const scrollRefs = useRef({})
 
-    // Функции для скролла
     const scrollLeft = (statusKey) => {
         if (scrollRefs.current[statusKey]) {
             scrollRefs.current[statusKey].scrollBy({
@@ -178,6 +181,15 @@ const ProfilePage = () => {
 
                     {isEditing ? (
                         <div className="text-container editing">
+                            {saveError && (
+                                <p
+                                    className="error-message"
+                                    style={{ color: 'red', marginTop: '10px' }}
+                                >
+                                    {saveError}
+                                </p>
+                            )}
+
                             <div className="block">
                                 <h3 className="sub-title">Имя:</h3>
                                 <input

@@ -86,4 +86,28 @@ export const UserService = {
             )
         }
     },
+
+    updateUser: async (userData) => {
+        try {
+            const response = await axios.patch(
+                `${API_BASE_URL}api/v1/users/me`,
+                userData,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true,
+                }
+            )
+            return response.data
+        } catch (error) {
+            if (error.response) {
+                throw new Error(
+                    error.response.data.detail || 'Ошибка обновления данных'
+                )
+            }
+            throw new Error('Сервер не отвечает')
+        }
+    },
 }

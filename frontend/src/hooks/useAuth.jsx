@@ -49,5 +49,22 @@ export const useAuth = () => {
         }
     }
 
-    return { user, loading, error, login, logout, checkAuth }
+    const updateUser = async (userData) => {
+        setLoading(true)
+        try {
+            const updatedUser = await UserService.updateUser({
+                username: userData.username,
+                description: userData.description,
+            })
+            setUser((prev) => ({ ...prev, ...updatedUser }))
+            return true
+        } catch (err) {
+            setError(err.message)
+            return false
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return { user, loading, error, login, logout, checkAuth, updateUser }
 }
