@@ -7,6 +7,7 @@ import { AnimeService } from '../api/AnimeService'
 import { GenreService } from '../api/GenreService'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { IoMdClose } from 'react-icons/io'
 
 const STATUSES = {
     planned: 'В планах',
@@ -31,6 +32,7 @@ const ProfilePage = () => {
     const [loadingStatuses, setLoadingStatuses] = useState(true)
     const [loadingGenres, setLoadingGenres] = useState(true)
     const [saveError, setSaveError] = useState(null)
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
     useEffect(() => {
         const loadGenres = async () => {
@@ -178,6 +180,40 @@ const ProfilePage = () => {
 
     return (
         <div className="profile-container container">
+            {showLogoutConfirm && (
+                <div className="logout-confirm-modal">
+                    <div className="modal-content">
+                        <button
+                            className="close-button"
+                            onClick={() => setShowLogoutConfirm(false)}
+                        >
+                            <IoMdClose />
+                        </button>
+                        <h3>Подтверждение выхода</h3>
+                        <p>Вы уверены, что хотите выйти из аккаунта?</p>
+                        <div className="modal-buttons">
+                            <button
+                                className="confirm-button"
+                                onClick={() => {
+                                    handleSwitch('/')
+                                    setTimeout(() => {
+                                        logout()
+                                    }, 800)
+                                }}
+                            >
+                                Да, выйти
+                            </button>
+                            <button
+                                className="cancel-button"
+                                onClick={() => setShowLogoutConfirm(false)}
+                            >
+                                Отмена
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="margin-container">
                 <div className="left-container">
                     <div className="avatar-placeholder">
@@ -303,18 +339,9 @@ const ProfilePage = () => {
 
                                     <button
                                         className="standard-input button image-button"
-                                        onClick={() => {
-                                            if (
-                                                window.confirm(
-                                                    'Вы уверены, что хотите выйти?'
-                                                )
-                                            ) {
-                                                handleSwitch('/')
-                                                setTimeout(() => {
-                                                    logout()
-                                                }, 800)
-                                            }
-                                        }}
+                                        onClick={() =>
+                                            setShowLogoutConfirm(true)
+                                        }
                                     >
                                         <img
                                             src="/icons/logout.svg"
