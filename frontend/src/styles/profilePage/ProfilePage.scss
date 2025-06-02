@@ -45,6 +45,17 @@
             text-overflow: ellipsis;
         }
 
+        .block.textarea {
+            flex: 1;
+            padding: 0;
+        }
+
+        textarea {
+            height: calc(100% - 16px);
+            width: calc(100% - 16px);
+            padding: 8px;
+        }
+
         .text-container {
             background-color: rgba(30, 30, 30, 0.6);
             padding: 24px;
@@ -52,6 +63,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            gap: 16px;
             width: calc(100% - 48px);
             flex: 1;
 
@@ -89,6 +101,58 @@
                 flex-direction: column;
                 gap: 16px;
             }
+
+            .status-stats {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                margin-bottom: 16px;
+
+                .status-info {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 14px;
+                    margin-bottom: 10px;
+                }
+
+                .progress-bar-container {
+                    width: 100%;
+                    height: 6px;
+                    background-color: rgba(255, 255, 255, 0.1);
+                    border-radius: 4px;
+                }
+
+                .progress-bar-fill {
+                    height: 100%;
+                    border-radius: 4px;
+                }
+
+                .progress-bar-fill.planned {
+                    background-color: #3b82f6;
+                    box-shadow: 0 0 10px #3b82f6;
+                }
+                .progress-bar-fill.in_progress {
+                    background-color: #f59e0b;
+                    box-shadow: 0 0 10px #f59e0b;
+                }
+                .progress-bar-fill.rewatching {
+                    background-color: #8b5cf6;
+                    box-shadow: 0 0 10px #8b5cf6;
+                }
+                .progress-bar-fill.completed {
+                    background-color: #10b981;
+                    box-shadow: 0 0 10px #10b981;
+                }
+                .progress-bar-fill.paused {
+                    background-color: #64748b;
+                    box-shadow: 0 0 10px #64748b;
+                }
+                .progress-bar-fill.dropped {
+                    background-color: #ef4444;
+                    box-shadow: 0 0 10px #ef4444;
+                }
+            }
         }
     }
 
@@ -124,7 +188,7 @@
         .status-indicator.planned {
             color: #3b82f6;
         } /* В планах */
-        .status-indicator.watching {
+        .status-indicator.in_progress {
             color: #f59e0b;
         } /* Смотрю */
         .status-indicator.rewatching {

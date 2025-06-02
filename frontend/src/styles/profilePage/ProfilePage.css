@@ -43,6 +43,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.profile-container .left-container .block.textarea {
+  flex: 1;
+  padding: 0;
+}
+.profile-container .left-container textarea {
+  height: calc(100% - 16px);
+  width: calc(100% - 16px);
+  padding: 8px;
+}
 .profile-container .left-container .text-container {
   background-color: rgba(30, 30, 30, 0.6);
   padding: 24px;
@@ -50,6 +59,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 16px;
   width: calc(100% - 48px);
   flex: 1;
 }
@@ -81,6 +91,53 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+.profile-container .left-container .text-container .status-stats {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.profile-container .left-container .text-container .status-stats .status-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.profile-container .left-container .text-container .status-stats .progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+.profile-container .left-container .text-container .status-stats .progress-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+.profile-container .left-container .text-container .status-stats .progress-bar-fill.planned {
+  background-color: #3b82f6;
+  box-shadow: 0 0 10px #3b82f6;
+}
+.profile-container .left-container .text-container .status-stats .progress-bar-fill.in_progress {
+  background-color: #f59e0b;
+  box-shadow: 0 0 10px #f59e0b;
+}
+.profile-container .left-container .text-container .status-stats .progress-bar-fill.rewatching {
+  background-color: #8b5cf6;
+  box-shadow: 0 0 10px #8b5cf6;
+}
+.profile-container .left-container .text-container .status-stats .progress-bar-fill.completed {
+  background-color: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+.profile-container .left-container .text-container .status-stats .progress-bar-fill.paused {
+  background-color: #64748b;
+  box-shadow: 0 0 10px #64748b;
+}
+.profile-container .left-container .text-container .status-stats .progress-bar-fill.dropped {
+  background-color: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
 }
 .profile-container .right-container {
   display: flex;
@@ -116,7 +173,7 @@
 .profile-container .right-container .status-indicator.planned {
   color: #3b82f6;
 }
-.profile-container .right-container .status-indicator.watching {
+.profile-container .right-container .status-indicator.in_progress {
   color: #f59e0b;
 }
 .profile-container .right-container .status-indicator.rewatching {

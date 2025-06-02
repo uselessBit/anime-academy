@@ -168,6 +168,11 @@ const ProfilePage = () => {
         }
     }
 
+    const totalAnime = Object.keys(STATUSES).reduce(
+        (sum, status) => sum + getStatusCount(status),
+        0
+    )
+
     if (!user)
         return <div className="profile-container container">Загрузка...</div>
 
@@ -202,7 +207,7 @@ const ProfilePage = () => {
                                 />
                             </div>
 
-                            <div className="block">
+                            <div className="block textarea">
                                 <h3 className="sub-title">Описание:</h3>
                                 <textarea
                                     name="description"
@@ -244,6 +249,46 @@ const ProfilePage = () => {
                                 </div>
 
                                 <div className="profile-buttons">
+                                    {totalAnime > 0 && (
+                                        <div className="status-stats">
+                                            {Object.entries(STATUSES).map(
+                                                ([statusKey, statusName]) => {
+                                                    const count =
+                                                        getStatusCount(
+                                                            statusKey
+                                                        )
+                                                    const percentage =
+                                                        totalAnime > 0
+                                                            ? (count /
+                                                                  totalAnime) *
+                                                              100
+                                                            : 0
+
+                                                    return (
+                                                        <div
+                                                            className="status-progress"
+                                                            key={statusKey}
+                                                        >
+                                                            <div className="status-info">
+                                                                <span>
+                                                                    {`${statusName} - ${count}`}
+                                                                </span>
+                                                            </div>
+                                                            <div className="progress-bar-container">
+                                                                <div
+                                                                    className={`progress-bar-fill ${statusKey}`}
+                                                                    style={{
+                                                                        width: `${percentage}%`,
+                                                                    }}
+                                                                ></div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                            )}
+                                        </div>
+                                    )}
+
                                     <button
                                         className="standard-input button image-button"
                                         onClick={startEditing}
