@@ -5,7 +5,7 @@ import AnimeRating from './AnimeRating.jsx'
 import usePageTransition from '../hooks/usePageTransition.jsx'
 import API_BASE_URL from '../config.js'
 
-export default function AnimeCard({ anime }) {
+export default function AnimeCard({ anime, small = false }) {
     const [fasterTransition, setFasterTransition] = useState(false)
     const { ref, inView } = useInView({
         threshold: 0.1,
@@ -25,7 +25,8 @@ export default function AnimeCard({ anime }) {
         <div
             className={`anime-wrapper 
                 ${inView ? 'visible' : ''} 
-                ${fasterTransition ? 'faster' : ''}`}
+                ${fasterTransition ? 'faster' : ''}
+                ${small ? 'small' : ''}`}
             ref={ref}
             onClick={() => handleSwitch(`/anime/${anime.id}`)}
         >

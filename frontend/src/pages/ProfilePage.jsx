@@ -1,39 +1,125 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import '../styles/profilePage/ProfilePage.css'
 import AnimeCard from '../components/AnimeCard.jsx'
 import usePageTransition from '../hooks/usePageTransition.jsx'
-import API_BASE_URL from '../config.js'
+import { StatusService } from '../api/StatusService'
+import { AnimeService } from '../api/AnimeService'
+import { GenreService } from '../api/GenreService'
+import { useAuth } from '../hooks/useAuth.jsx'
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
-const ITEMS_VISIBLE = 3
+const STATUSES = {
+    planned: 'В планах',
+    watching: 'Смотрю',
+    rewatching: 'Пересматриваю',
+    completed: 'Просмотрено',
+    paused: 'Приостановлено',
+    dropped: 'Брошено',
+}
 
 const ProfilePage = () => {
+    const { user, logout } = useAuth()
     const { handleSwitch } = usePageTransition()
     const [isEditing, setIsEditing] = useState(false)
     const [updatedUser, setUpdatedUser] = useState({
         username: user?.username || '',
         description: user?.description || '',
     })
-    const [avatar, setAvatar] = useState(null)
-    const [avatarPreview, setAvatarPreview] = useState(null)
-    const [currentIndex, setCurrentIndex] = useState(0)
+    const [animeStatuses, setAnimeStatuses] = useState({})
+    const [animeCache, setAnimeCache] = useState({})
+    const [genres, setGenres] = useState([])
+    const [loadingStatuses, setLoadingStatuses] = useState(true)
+    const [loadingGenres, setLoadingGenres] = useState(true)
 
+    // Загружаем жанры
     useEffect(() => {
-        if (user) {
-            getUserReviews()
+        const loadGenres = async () => {
+            try {
+                setLoadingGenres(true)
+                const data = await GenreService.fetchAllGenres()
+                setGenres(data)
+            } catch (err) {
+                console.error('Ошибка загрузки жанров:', err)
+            } finally {
+                setLoadingGenres(false)
+            }
         }
-    }, [user, getUserReviews])
+        loadGenres()
+    }, [])
+
+    // Функция для преобразования ID жанров в названия
+    const mapGenresToAnime = (anime) => {
+        if (!anime) return null
+
+        return {
+            ...anime,
+            // Добавляем поле genres с названиями жанров
+            genres: anime.genre_ids.map(
+                (id) =>
+                    genres.find((g) => g.id === id)?.name || 'Неизвестный жанр'
+            ),
+        }
+    }
+
+    // Загружаем статусы пользователя
+    useEffect(() => {
+        if (!user?.id || loadingGenres) return
+
+        const fetchUserStatuses = async () => {
+            setLoadingStatuses(true)
+            try {
+                const statuses = await StatusService.getUserStatuses(user.id)
+
+                // Инициализируем объект для группировки
+                const grouped = {}
+                for (const status of Object.keys(STATUSES)) {
+                    grouped[status] = []
+                }
+
+                // Заполняем группировку
+                for (const status of statuses) {
+                    grouped[status.status].push(status.anime_id)
+                }
+
+                setAnimeStatuses(grouped)
+
+                // Для каждого ID аниме, которого нет в кеше, загружаем
+                const animeIds = statuses.map((s) => s.anime_id)
+                const newAnimeCache = { ...animeCache }
+                let needUpdate = false
+
+                for (const id of animeIds) {
+                    if (!newAnimeCache[id]) {
+                        try {
+                            const animeData =
+                                await AnimeService.fetchAnimeById(id)
+                            // Добавляем названия жанров к данным аниме
+                            newAnimeCache[id] = mapGenresToAnime(animeData)
+                            needUpdate = true
+                        } catch (error) {
+                            console.error(`Ошибка загрузки аниме ${id}:`, error)
+                            newAnimeCache[id] = null
+                            needUpdate = true
+                        }
+                    }
+                }
+
+                if (needUpdate) {
+                    setAnimeCache(newAnimeCache)
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки статусов:', error)
+            } finally {
+                setLoadingStatuses(false)
+            }
+        }
+
+        fetchUserStatuses()
+    }, [user, loadingGenres])
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
         setUpdatedUser({ ...updatedUser, [name]: value })
-    }
-
-    const handleFileChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0]
-            setAvatar(file)
-            setAvatarPreview(URL.createObjectURL(file))
-        }
     }
 
     const startEditing = () => {
@@ -41,58 +127,53 @@ const ProfilePage = () => {
             username: user.username || '',
             description: user.description || '',
         })
-        setAvatarPreview(null)
         setIsEditing(true)
     }
 
     const handleSave = async () => {
-        try {
-            await updateUserData(updatedUser, avatar)
-            setIsEditing(false)
-            setAvatar(null)
-        } catch (error) {
-            console.error('Error saving profile:', error)
+        // Здесь должна быть логика обновления данных пользователя
+        setIsEditing(false)
+    }
+
+    const getStatusCount = (status) => {
+        return animeStatuses[status]?.length || 0
+    }
+
+    const getAnimeForStatus = (status) => {
+        const ids = animeStatuses[status] || []
+        return ids.map((id) => animeCache[id]).filter(Boolean)
+    }
+
+    const scrollRefs = useRef({}) // Ref для контейнеров скролла
+
+    // Функции для скролла
+    const scrollLeft = (statusKey) => {
+        if (scrollRefs.current[statusKey]) {
+            scrollRefs.current[statusKey].scrollBy({
+                left: -192,
+                behavior: 'smooth',
+            })
         }
     }
 
-    const paginate = (direction) => {
-        setCurrentIndex((prevIndex) => {
-            const nextIndex =
-                direction === 'next' ? prevIndex + 1 : prevIndex - 1
-            return Math.max(
-                0,
-                Math.min(favorites.length - ITEMS_VISIBLE, nextIndex)
-            )
-        })
+    const scrollRight = (statusKey) => {
+        if (scrollRefs.current[statusKey]) {
+            scrollRefs.current[statusKey].scrollBy({
+                left: 192,
+                behavior: 'smooth',
+            })
+        }
     }
 
-    if (!user) return <div></div>
+    if (!user)
+        return <div className="profile-container container">Загрузка...</div>
 
     return (
         <div className="profile-container container">
             <div className="margin-container">
                 <div className="left-container">
-                    <div className="profile-image-container">
-                        <img
-                            src={
-                                avatarPreview ||
-                                (user.avatar
-                                    ? `${API_BASE_URL}/uploads/avatars/${user.avatar}`
-                                    : `${API_BASE_URL}/uploads/avatars/default-avatar.png`)
-                            }
-                            alt="avatar"
-                            className="profile-image blurred"
-                        />
-                        <img
-                            src={
-                                avatarPreview ||
-                                (user.avatar
-                                    ? `${API_BASE_URL}/uploads/avatars/${user.avatar}`
-                                    : `${API_BASE_URL}/uploads/avatars/default-avatar.png`)
-                            }
-                            alt="avatar"
-                            className="profile-image main-image"
-                        />
+                    <div className="avatar-placeholder">
+                        {user.username.charAt(0).toUpperCase()}
                     </div>
 
                     {isEditing ? (
@@ -118,23 +199,6 @@ const ProfilePage = () => {
                                     className="standard-input textarea"
                                     placeholder="Описание"
                                 />
-                            </div>
-
-                            <div className="block">
-                                <h3 className="sub-title">Аватар:</h3>
-                                <input
-                                    type="file"
-                                    id="file"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                    className="hidden"
-                                />
-                                <label
-                                    htmlFor="file"
-                                    className="standard-input file-input-label"
-                                >
-                                    Выберите файл
-                                </label>
                             </div>
 
                             <div className="profile-buttons">
@@ -165,16 +229,6 @@ const ProfilePage = () => {
                                             Отсутствует
                                         </p>
                                     )}
-                                </div>
-
-                                <div className="block">
-                                    <h3 className="sub-title">В избранном:</h3>
-                                    <p>{favorites.length} аниме</p>
-                                </div>
-
-                                <div className="block">
-                                    <h3 className="sub-title">Отзывов:</h3>
-                                    <p>{reviews.length}</p>
                                 </div>
 
                                 <div className="profile-buttons">
@@ -219,90 +273,83 @@ const ProfilePage = () => {
                 </div>
 
                 <div className="right-container">
-                    <section className="favorites-container">
-                        <h2>
-                            <span className="blue">*</span> Избранное аниме
-                        </h2>
-                        {favorites.length > 0 ? (
-                            <div
-                                className={`cards-container ${favorites.length > ITEMS_VISIBLE ? '' : 'none-pagination'}`}
-                            >
-                                {favorites.length > ITEMS_VISIBLE && (
-                                    <button
-                                        disabled={currentIndex === 0}
-                                        onClick={() => paginate('prev')}
-                                        className="standard-input pagination-button"
-                                    >
-                                        <img
-                                            src="/icons/arrow.svg"
-                                            alt="⬇️"
-                                            className="left"
-                                        />
-                                    </button>
-                                )}
+                    {loadingStatuses || loadingGenres ? (
+                        <p>Загрузка списков...</p>
+                    ) : (
+                        <div className="status-grid">
+                            {Object.entries(STATUSES).map(
+                                ([statusKey, statusName]) => {
+                                    const animes = getAnimeForStatus(statusKey)
+                                    return (
+                                        <section
+                                            className="status-section"
+                                            key={statusKey}
+                                        >
+                                            <div className="status-header">
+                                                <h2 className="statuses-title">
+                                                    <span
+                                                        className={`status-indicator ${statusKey}`}
+                                                    >
+                                                        *
+                                                    </span>{' '}
+                                                    {statusName}
+                                                </h2>
+                                            </div>
 
-                                <div className="cards-wrapper">
-                                    <div
-                                        className="cards-slider"
-                                        style={{
-                                            transform: `translateX(calc(-${currentIndex * (100 / ITEMS_VISIBLE)}% - ${currentIndex * 10}px))`,
-                                        }}
-                                    >
-                                        {favorites.map((item) => (
-                                            <AnimeCard
-                                                key={item.id}
-                                                anime={item}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {favorites.length > ITEMS_VISIBLE && (
-                                    <button
-                                        disabled={
-                                            currentIndex ===
-                                            favorites.length - ITEMS_VISIBLE
-                                        }
-                                        onClick={() => paginate('next')}
-                                        className="standard-input pagination-button"
-                                    >
-                                        <img
-                                            src="/icons/arrow.svg"
-                                            alt="⬇️"
-                                            className="right"
-                                        />
-                                    </button>
-                                )}
-                            </div>
-                        ) : (
-                            <p className="none-items">
-                                У вас нет избранных аниме(
-                            </p>
-                        )}
-                    </section>
-
-                    <section className="favorites-container">
-                        <h2>
-                            <span className="green">*</span> Оставленные отзывы
-                        </h2>
-                        {reviews.length > 0 ? (
-                            <ul>
-                                {reviews.map((review, index) => (
-                                    <li key={index}>
-                                        <strong>
-                                            {review.title ||
-                                                'Название недоступно'}
-                                            :
-                                        </strong>{' '}
-                                        {review.rating} -{' '}
-                                        {review.review || 'Отзыв отсутствует'}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="none-items">У вас нет отзывов(</p>
-                        )}
-                    </section>
+                                            {animes.length > 0 ? (
+                                                <div className="scrollable-container">
+                                                    {animes.length > 3 && (
+                                                        <button
+                                                            className="scroll-button left"
+                                                            onClick={() =>
+                                                                scrollLeft(
+                                                                    statusKey
+                                                                )
+                                                            }
+                                                        >
+                                                            <FaChevronLeft />
+                                                        </button>
+                                                    )}
+                                                    <div
+                                                        className={`status-cards ${animes.length > 3 ? 'scrollable' : ''}`}
+                                                        ref={(el) =>
+                                                            (scrollRefs.current[
+                                                                statusKey
+                                                            ] = el)
+                                                        }
+                                                    >
+                                                        {animes.map((anime) => (
+                                                            <AnimeCard
+                                                                key={anime.id}
+                                                                anime={anime}
+                                                                small={true}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                    {animes.length > 3 && (
+                                                        <button
+                                                            className="scroll-button right"
+                                                            onClick={() =>
+                                                                scrollRight(
+                                                                    statusKey
+                                                                )
+                                                            }
+                                                        >
+                                                            <FaChevronRight />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <p className="none-items">
+                                                    Список пуст
+                                                </p>
+                                            )}
+                                        </section>
+                                    )
+                                }
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -45,4 +45,20 @@ export const StatusService = {
             { withCredentials: true }
         )
     },
+
+    getUserStatuses: async (userId) => {
+        try {
+            const response = await axios.get(
+                `${API_BASE_URL}api/v1/crud/user_anime_status/user/${userId}`,
+                { withCredentials: true }
+            )
+            return Array.isArray(response.data)
+                ? response.data
+                : [response.data]
+        } catch (error) {
+            if (error.response?.status === 204) return []
+            console.error('Error fetching user statuses:', error)
+            return []
+        }
+    },
 }
