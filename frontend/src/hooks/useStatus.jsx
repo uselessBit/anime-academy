@@ -33,14 +33,12 @@ export const useStatus = (animeId, userId) => {
         if (!userId || !animeId) return
 
         try {
-            // Удаление статуса
             if (!newStatus && status) {
                 await StatusService.deleteStatus(status.id)
                 setStatus(null)
                 return
             }
 
-            // Обновление существующего статуса
             if (status) {
                 await StatusService.updateStatus(status.id, {
                     ...status,
@@ -50,7 +48,6 @@ export const useStatus = (animeId, userId) => {
                 return
             }
 
-            // Создание нового статуса
             const newStatusData = {
                 user_id: userId,
                 anime_id: animeId,

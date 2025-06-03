@@ -12,6 +12,7 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import AnimePage from './pages/AnimePage.jsx'
+import { UserProvider } from './contexts/UserContext.jsx'
 
 const AppContent = () => {
     const location = useLocation()
@@ -34,8 +35,10 @@ const AppContent = () => {
 
 export default function App() {
     return (
-        <Router>
-            <AppContent />
-        </Router>
+        <UserProvider>
+            <Router>
+                <AppContent />
+            </Router>
+        </UserProvider>
     )
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import usePageTransition from '../hooks/usePageTransition.jsx'
 import Message from '../components/Message.jsx'
-import { useRegister } from '../hooks/useRegister'
+import { useUser } from '../contexts/UserContext.jsx'
 import '../styles/Auth.css'
 import { TbEye, TbEyeClosed } from 'react-icons/tb'
 
@@ -17,7 +17,7 @@ export default function RegisterPage() {
         visible: false,
     })
 
-    const { register, loading } = useRegister()
+    const { register, loading } = useUser()
     const { handleSwitch } = usePageTransition()
 
     const [showPassword, setShowPassword] = useState({

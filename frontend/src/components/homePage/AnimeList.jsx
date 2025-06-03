@@ -1,4 +1,3 @@
-// AnimeList.jsx
 import React, { useState, useEffect } from 'react'
 import '../../styles/homePage/AnimeList.css'
 import AnimeCard from '../AnimeCard.jsx'

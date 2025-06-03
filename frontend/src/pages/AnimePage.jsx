@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAnime } from '../hooks/useAnime'
-import { useAuth } from '../hooks/useAuth'
+import { useUser } from '../contexts/UserContext.jsx'
 import { RatingModal } from '../components/animePage/RatingModal'
 import { Notification } from '../components/animePage/Notification'
 import '../styles/animePage/AnimePage.css'
@@ -19,7 +19,7 @@ export default function AnimePage() {
     const episodesContainerRef = useRef(null)
     const { anime, loading, error } = useAnime(Number(id))
     const [selectedEpisode, setSelectedEpisode] = useState(0)
-    const { user } = useAuth()
+    const { user } = useUser()
     const [showRatingModal, setShowRatingModal] = useState(false)
     const [notification, setNotification] = useState(null)
     const {
@@ -52,7 +52,7 @@ export default function AnimePage() {
 
     const scrollEpisodes = (direction) => {
         if (episodesContainerRef.current) {
-            const scrollAmount = 300 // Шаг прокрутки
+            const scrollAmount = 300
             episodesContainerRef.current.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth',
@@ -328,11 +328,7 @@ export default function AnimePage() {
                 </div>
             )}
 
-            <div className="container anime-container" id="player">
-                <div className="margin-container">
-                    <CommentsSection animeId={Number(id)} />
-                </div>
-            </div>
+            <CommentsSection animeId={Number(id)} />
 
             {notification && (
                 <Notification

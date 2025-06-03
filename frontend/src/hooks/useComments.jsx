@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { CommentService } from '../api/CommentService'
-import { useAuth } from './useAuth.jsx'
+import { useUser } from '../contexts/UserContext.jsx'
 
 const findCommentInTree = (comments, commentId) => {
     for (const comment of comments) {
@@ -17,7 +17,7 @@ export const useComments = (animeId) => {
     const [comments, setComments] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    const { user } = useAuth()
+    const { user } = useUser()
 
     const loadComments = async () => {
         try {

@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import usePageTransition from '../../hooks/usePageTransition.jsx'
-import { useAuth } from '../../hooks/useAuth'
+import { useUser } from '../../contexts/UserContext.jsx'
 import '../../styles/Header.css'
 import Search from './Search.jsx'
 
 const Header = () => {
-    const { user } = useAuth()
+    const { user, loading } = useUser()
     const [animation, setAnimation] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const { handleSwitch } = usePageTransition()
 
-    setTimeout(() => {
-        setAnimation(true)
-    }, 600)
+    useEffect(() => {
+        if (!loading) {
+            const timer = setTimeout(() => {
+                setAnimation(true)
+            }, 600)
+            return () => clearTimeout(timer)
+        }
+    }, [loading])
 
     useEffect(() => {
         const handleScroll = () => {

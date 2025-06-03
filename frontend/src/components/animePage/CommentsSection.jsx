@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
-import { useAuth } from '../../hooks/useAuth'
 import { useComments } from '../../hooks/useComments'
-import { useUser } from '../../hooks/useUser'
+import { useUser } from '../../contexts/UserContext.jsx'
 import '../../styles/animePage/CommentsSection.css'
 
 const Comment = ({ comment, onReply, onShowReplies, repliesLoaded }) => {
     const [showReplyForm, setShowReplyForm] = useState(false)
     const [replyContent, setReplyContent] = useState('')
     const [showReplies, setShowReplies] = useState(false)
-    const { user: currentUser } = useAuth()
+    const { user: currentUser } = useUser()
 
     const { user: commentUser, loading: userLoading } = useUser(comment.user_id)
 
@@ -132,7 +131,7 @@ const Comment = ({ comment, onReply, onShowReplies, repliesLoaded }) => {
 
 export const CommentsSection = ({ animeId }) => {
     const [commentContent, setCommentContent] = useState('')
-    const { user } = useAuth()
+    const { user } = useUser()
     const { comments, loading, error, addComment, loadReplies } =
         useComments(animeId)
 
@@ -144,38 +143,52 @@ export const CommentsSection = ({ animeId }) => {
     }
 
     return (
-        <div className="comments-section">
-            <h2>Комментарии</h2>
-
+        <>
             {user && (
-                <div className="new-comment">
-                    <textarea
-                        value={commentContent}
-                        onChange={(e) => setCommentContent(e.target.value)}
-                        placeholder="Ваш комментарий..."
-                    />
-                    <button
-                        onClick={handleAddComment}
-                        className="standard-input button"
-                    >
-                        Отправить
-                    </button>
+                <div className="container anime-container" id="player">
+                    <div className="margin-container">
+                        <div className="comments-section">
+                            <h2>Комментарии</h2>
+
+                            {user && (
+                                <div className="new-comment">
+                                    <textarea
+                                        value={commentContent}
+                                        onChange={(e) =>
+                                            setCommentContent(e.target.value)
+                                        }
+                                        placeholder="Ваш комментарий..."
+                                    />
+                                    <button
+                                        onClick={handleAddComment}
+                                        className="standard-input button"
+                                    >
+                                        Отправить
+                                    </button>
+                                </div>
+                            )}
+
+                            {loading && (
+                                <div className="loading">
+                                    Загрузка комментариев...
+                                </div>
+                            )}
+
+                            <div className="comments-list">
+                                {comments.map((comment) => (
+                                    <Comment
+                                        key={comment.id}
+                                        comment={comment}
+                                        onReply={addComment}
+                                        onShowReplies={loadReplies}
+                                        repliesLoaded={comment.repliesLoaded}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
-
-            {loading && <div className="loading">Загрузка комментариев...</div>}
-
-            <div className="comments-list">
-                {comments.map((comment) => (
-                    <Comment
-                        key={comment.id}
-                        comment={comment}
-                        onReply={addComment}
-                        onShowReplies={loadReplies}
-                        repliesLoaded={comment.repliesLoaded}
-                    />
-                ))}
-            </div>
-        </div>
+        </>
     )
 }

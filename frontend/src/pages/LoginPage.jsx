@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../hooks/useAuth'
+import { useUser } from '../contexts/UserContext.jsx'
 import usePageTransition from '../hooks/usePageTransition.jsx'
 import Message from '../components/Message.jsx'
 import '../styles/Auth.css'
@@ -8,7 +8,7 @@ import { TbEye, TbEyeClosed } from 'react-icons/tb'
 export default function LoginPage() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const { user, login, loading, error } = useAuth()
+    const { user, login, loading, error } = useUser()
     const { handleSwitch } = usePageTransition()
 
     const [showSuccess, setShowSuccess] = useState(false)

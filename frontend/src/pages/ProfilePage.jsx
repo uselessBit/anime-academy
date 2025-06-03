@@ -5,7 +5,7 @@ import usePageTransition from '../hooks/usePageTransition.jsx'
 import { StatusService } from '../api/StatusService'
 import { AnimeService } from '../api/AnimeService'
 import { GenreService } from '../api/GenreService'
-import { useAuth } from '../hooks/useAuth.jsx'
+import { useUser } from '../contexts/UserContext.jsx'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import { IoMdClose } from 'react-icons/io'
 
@@ -19,7 +19,7 @@ const STATUSES = {
 }
 
 const ProfilePage = () => {
-    const { user, logout, updateUser } = useAuth()
+    const { user, logout, updateUser } = useUser()
     const { handleSwitch } = usePageTransition()
     const [isEditing, setIsEditing] = useState(false)
     const [updatedUser, setUpdatedUser] = useState({

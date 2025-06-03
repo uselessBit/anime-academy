@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../../styles/Search.css'
 import AnimeRating from '../AnimeRating.jsx'
-import { AnimeService } from '../../api/AnimeService' // Импорт сервиса для поиска
+import { AnimeService } from '../../api/AnimeService'
 import usePageTransition from '../../hooks/usePageTransition.jsx'
 import API_BASE_URL from '../../config.js'
 
@@ -19,14 +19,9 @@ const Search = () => {
     }
 
     useEffect(() => {
-        // Блокировка скролла при активном поиске
-        if (isActive) {
-            document.body.style.overflow = 'hidden'
-        } else {
-            document.body.style.overflow = 'auto'
-        }
+        if (isActive) document.body.style.overflow = 'hidden'
+        else document.body.style.overflow = 'auto'
 
-        // Обработка клавиши Escape
         const handleKeydown = (e) => {
             if (e.key === 'Escape') {
                 setQuery('')
@@ -59,7 +54,6 @@ const Search = () => {
 
         setLoading(true)
 
-        // Таймер для задержки запроса
         const timeoutId = setTimeout(() => {
             AnimeService.searchAnimeByTitle(query)
                 .then((response) => {
