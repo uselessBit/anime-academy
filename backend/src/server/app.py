@@ -22,7 +22,7 @@ class CustomFastAPI(FastAPI):
     container: DependencyContainer
 
 
-origins = ["http://localhost:5174", "http://127.0.0.1:5174", "http://0.0.0.0:8000"]
+origins = ["http://localhost:5174", "http://127.0.0.1:5174", "http://0.0.0.0:8000", "https://anime-academy.netlify.app"]
 
 
 @asynccontextmanager
