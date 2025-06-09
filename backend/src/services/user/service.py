@@ -68,7 +68,7 @@ async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db
 
 
 cookie_transport = CookieTransport(
-    cookie_max_age=2_592_000, cookie_name="fastapiusersauth", cookie_secure=user_settings.cookie_secure
+    cookie_max_age=2_592_000, cookie_name="fastapiusersauth", cookie_secure=user_settings.cookie_secure, cookie_samesite="none"
 )
 
 
