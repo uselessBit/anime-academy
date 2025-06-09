@@ -126,4 +126,12 @@ textarea {
   font-family: "Montserrat", serif;
 }
 
+.admin {
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
 /*# sourceMappingURL=index.css.map */

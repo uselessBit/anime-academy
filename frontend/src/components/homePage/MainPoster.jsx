@@ -25,16 +25,12 @@ export default function MainPoster() {
         >
             <div className="image-container">
                 <img
-                    src={`${API_BASE_URL}media/anime/${anime.image_url}`}
+                    src={anime.poster_url}
                     alt=""
                     className="main-anime blurred"
                     onLoad={handleImageLoad}
                 />
-                <img
-                    src={`${API_BASE_URL}media/anime/${anime.image_url}`}
-                    alt=""
-                    className="main-anime"
-                />
+                <img src={anime.poster_url} alt="" className="main-anime" />
             </div>
 
             <div className="content-container">

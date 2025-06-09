@@ -41,10 +41,15 @@ const Header = () => {
                     <Search />
 
                     <div className="buttons-container">
-                        {user && (
-                            <button className="standard-input button">
+                        {user && user.is_superuser && (
+                            <a
+                                href="https://anime-academy.onrender.com/admin"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="standard-input button admin"
+                            >
                                 Админка
-                            </button>
+                            </a>
                         )}
                         <button
                             className="standard-input button"
