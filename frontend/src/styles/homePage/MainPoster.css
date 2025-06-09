@@ -54,6 +54,7 @@
 }
 .main-anime-container .content-container p {
   font-size: 32px;
+  line-clamp: 4;
 }
 .main-anime-container .content-container .button {
   height: 64px;
