@@ -8,7 +8,7 @@ export default defineConfig({
         port: 5174,
         proxy: {
             '/api': {
-                target: 'anime-academy.onrender.com',
+                target: 'https://anime-academy.onrender.com',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, ''),
                 secure: false,
