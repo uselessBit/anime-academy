@@ -141,3 +141,21 @@
         font-weight: 900;
     }
 }
+
+@media (max-width: 768px) {
+    .anime-wrapper {
+        min-width: 140px;
+        max-width: 200px;
+        height: 220px;
+
+        &.small {
+            min-width: 120px;
+            max-width: 120px;
+            height: 180px;
+        }
+
+        .title {
+            font-size: 14px;
+        }
+    }
+}

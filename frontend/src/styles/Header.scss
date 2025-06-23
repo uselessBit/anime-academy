@@ -46,3 +46,11 @@ header {
         cursor: pointer;
     }
 }
+
+@media (max-width: 900px) {
+    header {
+        .logo {
+            height: 32px;
+        }
+    }
+}

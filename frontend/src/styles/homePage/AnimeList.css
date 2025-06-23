@@ -28,11 +28,23 @@
 }
 
 @media (max-width: 950px) {
-  .anime-catalog .anime-list-title {
-    width: 200px;
-  }
   .anime-catalog .buttons-container {
-    flex-direction: column-reverse;
+    width: 100%;
+  }
+  .anime-catalog .anime-list-title {
+    font-size: 32px;
+  }
+  .anime-catalog .anime-top-container {
+    flex-direction: column;
+    gap: 12px;
+    margin: 32px 0 16px 0;
+  }
+  .anime-catalog .anime-cards {
+    gap: 16px;
+  }
+  .anime-catalog button {
+    padding: 8px 16px;
+    flex: 1;
   }
 }
 

@@ -42,4 +42,10 @@
   height: 16px;
 }
 
+@media (max-width: 768px) {
+  .sort-container .sort-button {
+    width: 180px;
+  }
+}
+
 /*# sourceMappingURL=SortMenu.css.map */

@@ -166,6 +166,11 @@ search.active {
             input[type='search'] {
                 width: 40vw;
             }
+
+            .search-icon {
+                left: calc(50% - 46px);
+                top: 20px;
+            }
         }
     }
 }

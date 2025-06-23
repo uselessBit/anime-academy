@@ -72,4 +72,44 @@
   filter: drop-shadow(0 0 32px rgb(0, 0, 0));
 }
 
+@media (max-width: 768px) {
+  .main-anime-container {
+    height: 300px;
+    margin-top: 32px;
+  }
+  .main-anime-container .main-anime {
+    border-radius: 32px;
+  }
+  .main-anime-container .content-container {
+    padding: 16px;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: calc(100% - 32px);
+  }
+  .main-anime-container .content-container h1 {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .main-anime-container .content-container p {
+    font-size: 16px;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+  .main-anime-container .content-container .button {
+    height: 48px;
+    width: 100%;
+    padding: 0 48px;
+    font-size: 16px;
+    border-radius: 20px;
+    gap: 8px;
+  }
+  .main-anime-container .content-container .button .button-icon {
+    height: 16px;
+  }
+  .profile-container .margin-container {
+    flex-direction: column;
+  }
+}
+
 /*# sourceMappingURL=MainPoster.css.map */

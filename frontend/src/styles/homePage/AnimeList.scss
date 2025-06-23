@@ -34,12 +34,27 @@
 
 @media (max-width: 950px) {
     .anime-catalog {
-        .anime-list-title {
-            width: 200px;
+        .buttons-container {
+            width: 100%;
         }
 
-        .buttons-container {
-            flex-direction: column-reverse;
+        .anime-list-title {
+            font-size: 32px;
+        }
+
+        .anime-top-container {
+            flex-direction: column;
+            gap: 12px;
+            margin: 32px 0 16px 0;
+        }
+
+        .anime-cards {
+            gap: 16px;
+        }
+
+        button {
+            padding: 8px 16px;
+            flex: 1;
         }
     }
 }

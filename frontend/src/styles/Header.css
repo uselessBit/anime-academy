@@ -33,4 +33,10 @@ header .logo {
   cursor: pointer;
 }
 
-/*# sourceMappingURL=header.css.map */
+@media (max-width: 900px) {
+  header .logo {
+    height: 32px;
+  }
+}
+
+/*# sourceMappingURL=Header.css.map */
